@@ -25,11 +25,9 @@ To ensure effective collaboration, agents must be designed with clear roles, lim
 
 By understanding the principles of agent-based systems, developers can create more intelligent, adaptable, and robust software solutions.
 
-***Idee practice***
-- Create 3 small programs (each program call the other with the needed input, python or wanted language)
-    - 1) Choose an matematical operation and ouput format
-    - 2) Execute operation
-    - 3) Format the result
+## **Practice**
+To demonstrate the concept of agents in practice, you can refer to the exercise outlined in our documentation ( [/docs/1-fondations-practice-agents.md](/docs/1-fondations-practice-agents.md) ). This exercise showcases the implementation of a simple multi-agent system, highlighting both the advantages and limitations of this approach.
+
 
 # Distributed Systems
 **Distributed Systems: A Scalable Approach to Handling Increased Workload**
@@ -61,12 +59,6 @@ While distributed systems offer numerous benefits, they also present challenges:
 - **Network Latency**: Communication delays between servers can impact performance.
 
 By understanding the fundamental concepts and strategies of distributed systems, developers can design and implement scalable, reliable, and efficient applications to meet the demands of modern computing.
-
-***Idee practice***
-- Create 3 small programs (each program call the other with the needed input, python or wanted language)
-    - 1) Entry api point (Dispatcher)
-    - 2) Program A
-    - 3) Program B
 
 # Multi-Agents Distributed Systems (MADS)
 
