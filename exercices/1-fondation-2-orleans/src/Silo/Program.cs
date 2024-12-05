@@ -8,7 +8,11 @@ using Orleans.Providers.MongoDB.Configuration;
 using Silo.Grains;
 
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 using System.Text.RegularExpressions;
+
+using static OrleansDashboard.Implementation.DashboardTelemetryExporter;
 
 const string DB_NAME = "PracticeChat";
 
@@ -46,18 +50,38 @@ Console.WriteLine("API : http://localhost:" + apiRandomPort);
 
 builder.Services.AddOrleans(s =>
 {
+      // Define the address of the mongoDB to use for the diferrent services
     s.UseMongoDBClient("mongodb://localhost")
+
+      // Define mongoDB as the source of information about the other members of the cluster
      .UseMongoDBClustering(options =>
      {
          options.DatabaseName = DB_NAME;
+
+         /*
+          * MongoDBMembershipStrategy.SingleDocument
+          * 
+          * This option parameterizes the extension to store only one document per cluster in the database. It is the most compatible option.
+          * You can change the configuration to store one document per silo, but this option only works with MongoDB versions that support transaction systems.
+          */
          options.Strategy = MongoDBMembershipStrategy.SingleDocument;
      })
+
+      // Define that mongoDB will be the default place to save the Grain States
      .AddMongoDBGrainStorageAsDefault((MongoDBGrainStorageOptions o) =>
      {
          o.DatabaseName = DB_NAME;
          o.CollectionPrefix = "ChatDemo";
      })
+
+     /*
+      * This defines the port binding that the Orleans silo will use.
+      * Without configuration, the Orleans silo binds to port 5000.
+      * We need to override this value with a random one to allow multiple silo instances to run on the local machine.
+      */
      .ConfigureEndpoints(siloPortRandom, 0)
+
+     // This enable the dashboard to see in a beautifull web application what happen in the cluster
      .UseDashboard();
 });
 
@@ -82,8 +106,9 @@ app.MapGet("/", request =>
 
 #endif
 
-Console.Title = Process.GetCurrentProcess().Id.ToString() + "port :" + apiRandomPort;
+Console.Title = Process.GetCurrentProcess().Id.ToString() + " port :" + apiRandomPort;
 
+// Setup a group of endpoint dedicated to user manipulation
 var userGrp = app.MapGroup("/user");
 
 userGrp.MapPost("login", async (string username, [FromServices] IGrainFactory factory, CancellationToken token) =>
@@ -110,6 +135,8 @@ userGrp.MapPost("logout", async (string username, [FromServices] IGrainFactory f
     await userGrain.Logout();
 });
 
+// Setup a group of endpoint dedicated to chat room
+// Note that we will take the "roomIdentifiant" from the route
 var roomGrp = app.MapGroup("/chat/room/{roomIdentifiant}");
 
 roomGrp.MapGet("etag", async ([FromRoute] string roomIdentifiant, [FromServices] IGrainFactory factory, CancellationToken token) =>

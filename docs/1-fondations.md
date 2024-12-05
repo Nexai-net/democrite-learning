@@ -136,6 +136,7 @@ Key Benefits of the Silo-Based Architecture:
 
 By understanding the role of silos in an Orleans cluster, developers can effectively design and implement scalable and resilient distributed applications.
 
+for more advanced information and tutorial you have [Microsoft documentation](https://learn.microsoft.com/en/dotnet/orleans/overview) and/or the project on [Github](https://github.com/dotnet/orleans).
 
 ***Idee practice***
 - Create a small chat system with room name and multiple client

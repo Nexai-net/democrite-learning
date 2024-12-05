@@ -15,6 +15,8 @@ Otherwise we advice you to follow the framework and package version that will be
 
 # Specifications
 
+## Requirements
+
 - One binary that can be launched multiple times on the same machine.
 - All instances of this binary connect together to form a cluster.
 - Each instance exposes an API (Swagger) to manipulate the data.
@@ -49,23 +51,24 @@ A room is never deleted and can be joined without restrictions.
 
 ## 1 - Solution Setup
 
-**Choose a folder and create a dotnet solution (SLN) called "MSOOlrean.Practice.Chat".**
+**Choose a folder and create a dotnet solution (SLN) called "MSOrleans.Practice.Chat".**
 
 You can do it using following command line and open the SLN generated with visual studio:
 ``` powershell
-dotnet create solution -n MSOOlrean.Practice.Chat
+dotnet create solution -n MSOrleans.Practice.Chat
 ```
 
-For this practice we will create only one projet called "**Silo**" using dotnet (8.0 min).<br/>
-To expose our API through swagger we will need to projet "Web" type. <br/>
-This kind of projet use dotnet core base with by default all the ASPNet core library.
+For this practice, we'll create a single project named "**Silo**" using .NET 8.0. <br/>
+To expose our API through Swagger, we'll need a "**Web**" project type.<br/>
+<br/>
+This type of project is based on .NET Core and automatically includes all necessary ASP.NET Core libraries.
+Visual Studio offers numerous templates to create web applications with various options.
+<br/>
+If you're unfamiliar with these templates, follow these simple steps instead:
 
-In visual studio you found a lot of template to create a web application with a lot of option. <br/>
-If you are not familiar with those we advice follow those simple steps.
-
-- Create a basic console application type
-- Open the projet file (csproj). You can right click on the projet -> Edit Project File
-- Change root xml tag from 
+- Create a basic console application.
+- Open the project file (csproj). You can right-click on the project and select "Edit Project File."
+- Change the root XML tag from...
 ``` xml
 <Project Sdk="Microsoft.NET.Sdk">
 ```
@@ -82,24 +85,24 @@ You will need for librairies for this practice.
 
 |Package|Minimal Version|Descriptions|
 |--|--|--|
-|**Microsoft.Orleans.Server**| 8.2.0| This package refer to all dependency needed to create a MS Orleans silo.|
-|**Orleans.Providers.MongoDB**|8.2.0| This package is an extension for MS Orleans that provide mongoDB storage capacity.|
-|**OrleansDashboard**|8.2.0| This package is an extension for MS Orleans that provide a web dashboard usefull to see what happen in the cluster.|
-|**Swashbuckle.AspNetCore**|7.1.0| This Package allow to create a swagger API with web application to use and test the API.|
+|**Microsoft.Orleans.Server**| 8.2.0| This package refers to all dependencies needed to create a MS Orleans silo.|
+|**Orleans.Providers.MongoDB**|8.2.0| This package is an extension for MS Orleans that provides mongoDB storage capacity.|
+|**OrleansDashboard**|8.2.0| This package is an extension for MS Orleans that provides a web dashboard usefull to seeing what's happening in the cluster.|
+|**Swashbuckle.AspNetCore**|7.1.0| This Package allows to create a swagger API with web application to use and test the API.|
 
 <br/>
 
 **Configure the basic of the application**
 
-We will build application using classic service builder, dependency injection and application hosting.
-To do so go to the program entry point (by default the file program.cs)
+We'll build our application using the classic service builder, dependency injection, and application hosting patterns.<br/> 
+To do this, let's navigate to the program entry point, typically the **Program.cs** file.
 
-we will create 3 parts:
-- Builder creation
-- Configuration
-- Application
+We'll structure our code into three main parts:
 
-First we start to create an application builder used to create a context where all the services are configured before run.
+- **Builder Preparation**: We'll create an application builder, which provides a context to configure services before the application starts.
+- **Configurations**: We'll configure various settings, such as database connections, API endpoints, and logging.
+- **Application**: We'll define the core logic of our to run application.
+
 ``` csharp
 /*
  * Builder Preparation 
@@ -123,11 +126,11 @@ await app.RunAsync();
 
 ## 2 - API
 
-To explose the API and have an easy interface to test it we will use swagger through **Swashbuckle** library.
+To expose the API and have an easy interface to test it, we will use swagger through **Swashbuckle** library.
 
 ### Configuration
 
-To configure swagger to simply have to insert in the "Service Configurations" section the following code:
+To configure swagger we simply have to insert in the section "Service Configurations" the following code:
 
 ``` csharp
 /*
@@ -137,7 +140,7 @@ To configure swagger to simply have to insert in the "Service Configurations" se
 // Enabled swagger API file generation
 builder.Services.AddSwaggerGen(options =>
 {
-    // Define doc infomations
+    // Define doc infomation
     options.SwaggerDoc("v1", new OpenApiInfo()
     {
         Title = "Chat Orlean demo",
@@ -149,12 +152,10 @@ builder.Services.AddSwaggerGen(options =>
 ```
 
 [!caution]
-> By default, Visual Studio have generated a file "Properties/launchSettings.json" <br/>
-> In this file you will found launch configuration used by visual studio. <br />
-> To be able to manualy launch locally multiple instances we need to override those configuration in code to prevent using the same port for each instances<br/>
-> Resulting in binding issues.<br/>
-><br/>
-> To do so we need to configure the "UseUrls" with the folling code: <br/>
+> By default, Visual Studio generates a launchSettings.json file containing launch configurations. <br/>
+> To manually launch multiple instances locally, we need to override these configurations in code to prevent port conflicts.<br/>
+>
+> We can achieve this by configuring the UseUrls property as follows:<br/>
 > ``` csharp
 > var apiRandomPort = Random.Shared.Next(5000, 65530); <br/>
 > builder.WebHost.UseUrls("http://localhost:" + apiRandomPort); <br/>
@@ -178,11 +179,8 @@ app.UseSwaggerUI();
 await app.RunAsync();
 ```
 
-[!tips]
-> To acceelarate the debug phase we advise to add te follow code after "app.UseSwaggerUI();". <br/>
-> When you launch the debugger visual studio will open by default the configured URL in explorer. <br/>
-> But to go to your swagger API interface you need to add /swagger at the end.<br/>
-> The following code directly redirect to swagger interface directly when root page is open.
+[!TIP]
+> To expedite the debugging process, we recommend adding the following code after "app.UseSwagger()" :
 >
 > ``` csharp
 >#if DEBUG
@@ -196,15 +194,141 @@ await app.RunAsync();
 > #endif
 > ```
 >
->
+> When you start the debugger, Visual Studio will automatically open the configured URL in your browser. <br/>
+> However, to access the Swagger API interface, you'll need to manually append /swagger to the URL. <br/>
+> The code above directly redirects to the Swagger interface when the root page is opened, saving you a step.
 
-*At this point when you open launch, it compile and launch on a swagger interface empty.*
+*At this point you have a code that compile and launch on a swagger interface, currently empty.*
 
 ### Endpoints
 
-We will now add our api endpoints using minimal API to simplify the process but you can use classic controllers is your are more familliare with.
+We'll now define our API endpoints using Minimal APIs for simplicity. However, you can use traditional controllers if you're more comfortable with that approach.<br/>
+Minimal API endpoints should be placed directly after "app.UseSwagger()" within the application section. <br />
+
+Based on the API specification, here's an example structure:
+
+``` csharp
+
+// Setup a group of endpoints dedicated to user
+var userGrp = app.MapGroup("/user");
+
+userGrp.MapPost("login", async (string username, CancellationToken token) =>
+{
+});
+
+userGrp.MapGet("room/list/{username}", async ([FromRoute] string username, CancellationToken token) =>
+{
+});
+
+userGrp.MapPost("logout", async (string username, CancellationToken token) =>
+{
+});
+
+// Setup a group of endpoints dedicated to chat room
+// Note that we will take the "roomIdentifiant" from the route
+var roomGrp = app.MapGroup("/chat/room/{roomIdentifiant}");
+
+roomGrp.MapGet("etag", async ([FromRoute] string roomIdentifiant, CancellationToken token) =>
+{
+});
+
+roomGrp.MapGet("participants", async ([FromRoute] string roomIdentifiant, CancellationToken token) =>
+{
+});
+
+roomGrp.MapPost("join", async ([FromQuery] string username, [FromRoute] string roomIdentifiant, CancellationToken token) =>
+{
+});
+
+roomGrp.MapPost("leave", async ([FromQuery] string username, [FromRoute] string roomIdentifiant, CancellationToken token) =>
+{
+});
+
+roomGrp.MapGet("messages", async ([FromRoute] string roomIdentifiant, [FromQuery]Guid? lastReceivedMessageId = null, CancellationToken token = default) =>
+{
+});
+
+roomGrp.MapPost("send/message", async ([FromRoute] string roomIdentifiant, [FromQuery] string username, string message, CancellationToken token) =>
+{
+});
+
+```
+
+*At this point you must have a compiling application that launched by openning the swagger interface with all the endpoints*
 
 ## 3 - Orleans Configuration
+
+Now that our API endpoints and Swagger interface are set up, we need to configure Orleans and its extensions. <br/>
+Orleans will handle the [Requirements](#requirements) we've chosen for this practice.
+
+We'll configure the application to be part of the local "default" cluster, using MongoDB as the meeting point and grain state storage.
+
+Add the following code to the configuration section:
+
+``` csharp
+var siloPortRandom = Random.Shared.Next(5000, 65530);
+
+builder.Services.AddOrleans(s =>
+{
+      // Define the address of the mongoDB to use for the diferrent services
+    s.UseMongoDBClient("mongodb://localhost")
+
+      // Define mongoDB as the source of information about the other members of the cluster
+     .UseMongoDBClustering(options =>
+     {
+         options.DatabaseName = DB_NAME;
+
+        /*
+         * MongoDBMembershipStrategy.SingleDocument
+         * 
+         * This option parameterizes the extension to store only one document per cluster in the database. It is the most compatible option.
+         * You can change the configuration to store one document per silo, but this option only works with MongoDB versions that support transaction systems.
+         */
+         options.Strategy = MongoDBMembershipStrategy.SingleDocument;
+     })
+
+      // Define that mongoDB will be the default place to save the Grain States
+     .AddMongoDBGrainStorageAsDefault((MongoDBGrainStorageOptions o) =>
+     {
+         o.DatabaseName = DB_NAME;
+         o.CollectionPrefix = "ChatDemo";
+     })
+
+      /*
+       * This defines the port binding that the Orleans silo will use.
+       * Without configuration, the Orleans silo binds to port 5000.
+       * We need to override this value with a random one to allow multiple silo instances to run on the local machine.
+       */
+     .ConfigureEndpoints(siloPortRandom, 0)
+
+      // This enable the dashboard to see in a beautifull web application what happen in the cluster
+     .UseDashboard();
+});
+```
+
+*At this step you will have a compiling application, an API exposed and an orleans silo connecting to each other to form a cluster*
+
+[!TIP]
+> To Identify the silo you can add the following line
+> ``` csharp
+> Console.Title = Process.GetCurrentProcess().Id.ToString() + " port :" + apiRandomPort;
+> ```
+
+[!TIP]
+> You can double-click on the generated binary multiple times to start multiple silos. <br/>
+> Each silo will connect to the local MongoDB instance to discover and form a cluster.
+>
+> If you navigate to http://localhost:8080, you'll see a dashboard displaying all the silos in the cluster.
+>
+> **Note**: All silos will attempt to bind to port 8080. Only one will succeed. If you close this silo, the dashboard will become inaccessible.
+>
+> You can easily identify the application owner by looking at the console logs, where you'll see a refresh tick.
+
+
+[!CAUTION]
+> When a silo fails, the remaining silos will attempt to reconnect multiple times.  <br />
+> This may result in normal warning or error logs being generated.
+
 ## 4 - User Grain
 ## 5 - Chat Room Grain
 ## 6 - Testing
@@ -215,5 +339,8 @@ We will now add our api endpoints using minimal API to simplify the process but 
 |--|--|
 |az|aze|
 
-A "correction" of the practice is available [/exercices/1-fondation-2-orleans/](/exercices/1-fondation-2-orleans/). We advise you to do by yourself. <br/>
-To run this solution you need to to have a mongodb instance usable by the connection "mongodb://127.0.0.1:27017", we advice to use a docker container.
+A corrected version of this practice is available at [/exercices/1-fondation-2-orleans/](/exercices/1-fondation-2-orleans/). <br/>
+We encourage you to try it on your own.
+
+To run this solution, you'll need a MongoDB instance accessible via the connection string "mongodb://127.0.0.1:27017". <br/>
+We recommend using a Docker container for this.
