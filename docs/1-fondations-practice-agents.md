@@ -101,3 +101,4 @@ This exercise demonstrates the core principles of agent-based systems. We explor
 ||Launching a new program instance for each task incurs performance overhead.|
 ||Although agents operate independently, there are situations where access to shared knowledge is advantageous.<br/> However, inter-process communication to access this shared knowledge can introduce performance overhead.|
 
+A "correction" of the practice is available [/exercices/1-fondation-1-agents/](/exercices/1-fondation-1-agents/). We advise you to do by yourself.

@@ -12,20 +12,33 @@ using System.Text.RegularExpressions;
 
 const string DB_NAME = "PracticeChat";
 
+/*
+ * Builder Preparation 
+ */
+
+// Create the application builder
 var builder = WebApplication.CreateBuilder();
 
+/*
+ * Services configurations
+ */
+
+// Enabled swagger API file generation
 builder.Services.AddSwaggerGen(options =>
 {
+    // Define doc infomations
     options.SwaggerDoc("v1", new OpenApiInfo()
     {
         Title = "Chat Orlean demo",
         Version = "v1",
     });
 
+    // Mapping MUST also look for minimal API
 }).AddEndpointsApiExplorer();
 
 var siloPortRandom = Random.Shared.Next(5000, 65530);
 
+// Help to ensure the API connect to an available port when we launch multiple instance in local
 var apiRandomPort = Random.Shared.Next(5000, 65530);
 builder.WebHost.UseUrls("http://localhost:" + apiRandomPort);
 
@@ -48,8 +61,13 @@ builder.Services.AddOrleans(s =>
      .UseDashboard();
 });
 
+/*
+ * Application
+ */
+
 var app = builder.Build();
 
+// Activate swagger 
 app.UseSwagger();
 
 var validNameReg = new Regex("^[a-zA-Z0-9]+$");
@@ -64,7 +82,7 @@ app.MapGet("/", request =>
 
 #endif
 
-Console.Title = Process.GetCurrentProcess().Id.ToString();
+Console.Title = Process.GetCurrentProcess().Id.ToString() + "port :" + apiRandomPort;
 
 var userGrp = app.MapGroup("/user");
 
@@ -84,7 +102,7 @@ userGrp.MapGet("room/list/{username}", async ([FromRoute] string username, [From
     return await userGrain.GetChatRoomList();
 });
 
-userGrp.MapPost("disconnect", async (string username, [FromServices] IGrainFactory factory, CancellationToken token) =>
+userGrp.MapPost("logout", async (string username, [FromServices] IGrainFactory factory, CancellationToken token) =>
 {
     EnsureNameIsValid(username, validNameReg);
 
@@ -145,7 +163,9 @@ roomGrp.MapPost("send/message", async ([FromRoute] string roomIdentifiant, [From
     return await room.SendMessage(username, message);
 });
 
+// Activate swagger UI
 app.UseSwaggerUI();
+
 await app.RunAsync();
 
 static void EnsureNameIsValid(string name, Regex validNameReg)
