@@ -3,7 +3,7 @@
 This documentation will provide you enought knowledge to be an expert with Democrite framework and know a lot in multi-agent system and distributer system.
 We will explain the needed fondation to understand democrite, how to use basic fonctionality of democrite and advanced features.
 
-[!info]
+[!INFO]
 > If you have any question or remarks use the [issue](https://github.com/Nexai-net/democrite-learning/issues) section or add tag [#democrite](https://stackoverflow.com/questions/tagged/democrite) on stackoverflow.
 
 # Fondation
@@ -12,28 +12,27 @@ Democrite is a multi-agent distributed system based on microsoft Orleans .net fr
 
 To do so go to [docs/1-fondation.md](/docs/1-fondations.md)
 
-## [Agents](/docs/1-fondations.md#agents)
-## [Distributed Systems](/docs/1-fondations.md#distributed-systems)
-## [Multi Distributed Systems](/docs/1-fondations.md#multi-agents-distributed-systems-mads)
-## [Orleans](/docs/1-fondations.md#microsoft-orleans)
+- [Agents](/docs/1-fondations.md#agents)
+- [Distributed Systems](/docs/1-fondations.md#distributed-systems)
+- [Multi Distributed Systems](/docs/1-fondations.md#multi-agents-distributed-systems-mads)
+- [Orleans](/docs/1-fondations.md#microsoft-orleans)
 
-# Basic
+# Incoming
 
-## Definition
-## VGrains - Agent Type
-## Sequence
-## Execution 
-## Trigger / Signal
+- Basic
+    - Definition
+    - VGrains - Agent Type
+    - Sequence
+    - Execution
+    - Trigger / Signal
 
-# Advanced
+- Advanced
+    - StreamQueue
+    - Dynamic Definition
+    - Artifacts
+    - Storage - Repository
 
-## StreamQueue
-## Dynamic Definition
-## Artifacts
-## Storage - Repository
-
-# Expert
-
-## Blackboard
-## Yaml Definition Compilation
-## CLI
+- Expert
+    - Blackboard
+    - Yaml Definition Compilation
+    - CLI
