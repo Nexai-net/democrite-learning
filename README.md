@@ -12,10 +12,10 @@ Democrite is a multi-agent distributed system based on microsoft Orleans .net fr
 
 To do so go to [docs/1-fondation.md](/docs/1-fondations.md)
 
-## Agents
-## Distributed Systems
-## Multi Distributed Systems
-## Orleans
+## [Agents](/docs/1-fondations.md#agents)
+## [Distributed Systems](/docs/1-fondations.md#distributed-systems)
+## [Multi Distributed Systems](/docs/1-fondations.md#multi-agents-distributed-systems-mads)
+## [Orleans](/docs/1-fondations.md#microsoft-orleans)
 
 # Basic
 

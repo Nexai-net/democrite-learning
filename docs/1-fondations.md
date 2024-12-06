@@ -28,7 +28,6 @@ By understanding the principles of agent-based systems, developers can create mo
 ## **Practice**
 To demonstrate the concept of agents in practice, you can refer to the exercise outlined in our documentation ( [/docs/1-fondations-practice-agents.md](/docs/1-fondations-practice-agents.md) ). This exercise showcases the implementation of a simple multi-agent system, highlighting both the advantages and limitations of this approach.
 
-
 # Distributed Systems
 **Distributed Systems: A Scalable Approach to Handling Increased Workload**
 
@@ -138,10 +137,10 @@ By understanding the role of silos in an Orleans cluster, developers can effecti
 
 for more advanced information and tutorial you have [Microsoft documentation](https://learn.microsoft.com/en/dotnet/orleans/overview) and/or the project on [Github](https://github.com/dotnet/orleans).
 
-***Idee practice***
-- Create a small chat system with room name and multiple client
-    - 1) One client
-    - 2) One Silo server
+## **Practice**
+We invite you to try out this practice to learn how to use MS Orleans effectively: [/docs/1-fondations-practice-orleans.md](/docs/1-fondations-practice-orleans.md).
+
+This practice guides you through building a resilient and distributed chat system with multi-user and multi-chat room functionalities. You'll get hands-on experience with key Orleans concepts and see how they translate into real-world applications.
 
 # Conclusion
 **The Evolution of Distributed Systems**
