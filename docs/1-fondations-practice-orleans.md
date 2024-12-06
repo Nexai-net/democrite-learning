@@ -151,7 +151,7 @@ builder.Services.AddSwaggerGen(options =>
 }).AddEndpointsApiExplorer();
 ```
 
-[!caution]
+> [!CAUTION]
 > By default, Visual Studio generates a launchSettings.json file containing launch configurations. <br/>
 > To manually launch multiple instances locally, we need to override these configurations in code to prevent port conflicts.<br/>
 >
@@ -179,7 +179,7 @@ app.UseSwaggerUI();
 await app.RunAsync();
 ```
 
-[!TIP]
+> [!TIP]
 > To expedite the debugging process, we recommend adding the following code after "app.UseSwagger()" :
 >
 > ``` csharp
@@ -308,13 +308,13 @@ builder.Services.AddOrleans(s =>
 
 *At this step you will have a compiling application, an API exposed and an orleans silo connecting to each other to form a cluster*
 
-[!TIP]
+> [!TIP]
 > To Identify the silo you can add the following line
 > ``` csharp
 > Console.Title = Process.GetCurrentProcess().Id.ToString() + " port :" + apiRandomPort;
 > ```
 
-[!TIP]
+> [!TIP]
 > You can double-click on the generated binary multiple times to start multiple silos. <br/>
 > Each silo will connect to the local MongoDB instance to discover and form a cluster.
 >
@@ -325,7 +325,7 @@ builder.Services.AddOrleans(s =>
 > You can easily identify the application owner by looking at the console logs, where you'll see a refresh tick.
 
 
-[!CAUTION]
+> [!CAUTION]
 > When a silo fails, the remaining silos will attempt to reconnect multiple times.  <br />
 > This may result in normal warning or error logs being generated.
 
@@ -432,14 +432,14 @@ In our case, we'll use the "username" as the key for our Grain.
 
 We'll need to store some information about the user. The main constraint is that the state object must be serializable and restorable.
 
-[!TIP]
+> [!TIP]
 > A possible unit test, you can populate a state object with values, serialize it to JSON, deserialize it, and compare the results.
 
 Orleans uses a binary serialization based on [Protobuf](https://protobuf.dev/) for efficient network data transfer. A generator creates the necessary data models during the project build process.
 
 To mark objects and properties for serialization, use the [GenerateSerializerAttribute] and [IdAttribute] attributes, respectively. You can apply these attributes to both public and private fields.
 
-[!CAUTION] 
+> [!CAUTION] 
 > For performance reasons, binary mapping might bypass constructors. To ensure proper initialization, override the Activate method of the Grain and call the constructor manually if necessary.
 
 In our case the user state will be like this:
@@ -579,7 +579,7 @@ public override async Task OnActivateAsync(CancellationToken cancellationToken)
 
 Following the example of the "UserGrain" try to implement the chat room without more information.
 
-[!TIP]
+> [!TIP]
 > Since .net 8.0 a kind of "new" type of data structure have been introduce "record" <br/>
 > A record is an easy way to create D.T.O (Data Transfert Object)
 >
@@ -591,7 +591,7 @@ Following the example of the "UserGrain" try to implement the chat room without 
 >
 > MS Orleans managed the "record" as serializable object.
 
-[!TIP]
+> [!TIP]
 >
 > Each MS Orleans instance run in a the application host where dependency injection of service is available. <br />
 > If you need any service you just have to ask if in the construction parameters the system will provide it to you
@@ -642,7 +642,7 @@ This test ensure data are persisted and validate all the simple mechanism to add
 A corrected version of this practice is available at [/exercices/1-fondation-2-orleans/](/exercices/1-fondation-2-orleans/). <br/>
 We encourage you to try it on your own.
 
-[!TIP]
+> [!TIP]
 > To run the corrected version, you'll need a MongoDB instance accessible via the connection string "mongodb://127.0.0.1:27017". <br/>
 > We recommend using a Docker container for this.
 

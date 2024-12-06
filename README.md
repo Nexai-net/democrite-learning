@@ -3,7 +3,7 @@
 This documentation will provide you enought knowledge to be an expert with Democrite framework and know a lot in multi-agent system and distributer system.
 We will explain the needed fondation to understand democrite, how to use basic fonctionality of democrite and advanced features.
 
-[!NOTE]
+> [!NOTE]
 > If you have any question or remarks use the [issue](https://github.com/Nexai-net/democrite-learning/issues) section or add tag [#democrite](https://stackoverflow.com/questions/tagged/democrite) on stackoverflow.
 
 # Fondation
