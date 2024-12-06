@@ -27,12 +27,21 @@
 
         #region Properties
 
+        /// <summary>
+        /// Gets all the rooms where the users is currently participating.
+        /// </summary>
         [Id(0)]
         public IReadOnlyCollection<string> Rooms { get; }
 
+        /// <summary>
+        /// Gets the name of the user.
+        /// </summary>
         [Id(1)]
         public string UserName { get; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is logged.
+        /// </summary>
         [Id(2)]
         public bool IsLogged { get; set; }
 

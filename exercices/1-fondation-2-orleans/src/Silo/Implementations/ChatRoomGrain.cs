@@ -22,7 +22,8 @@
         /// Initializes a new instance of the <see cref="ChatRoomGrain"/> class.
         /// </summary>
         public ChatRoomGrain([PersistentState("ChatRooms")] IPersistentState<ChatRoomState> storage,
-                              IGrainFactory grainFactory)
+                              IGrainFactory grainFactory,
+                              ILogger<IChatRoomGrain> logger)
             : base(storage)
         {
             this._grainFactory = grainFactory;

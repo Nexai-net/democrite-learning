@@ -1,6 +1,6 @@
 ﻿namespace Silo.Models
 {
-    [GenerateSerializer(IncludePrimaryConstructorParameters = false)]
+    [GenerateSerializer()]
     public sealed class ChatRoomState
     {
         #region Fields

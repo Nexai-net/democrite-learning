@@ -6,12 +6,12 @@
     public interface IUserGrain : IGrainWithStringKey
     {
         /// <summary>
-        /// Login user and return all the room list it participate
+        /// Log a userand return all the room list it participate
         /// </summary>
         Task<IReadOnlyCollection<string>> LoginAsync();
 
         /// <summary>
-        /// Determines whether this instance is logged.
+        /// Determines whether this user is logged.
         /// </summary>
         Task<bool> IsLogged();
 
@@ -31,7 +31,7 @@
         Task<IReadOnlyCollection<string>> GetChatRoomList();
 
         /// <summary>
-        /// Logouts this instance.
+        /// Logouts this user.
         /// </summary>
         Task Logout();
     }
