@@ -260,11 +260,53 @@ This rule facilitates the management of automatic calls within sequences, trigge
 
 ## Implementation
 
-    [VGrainIdRegexValidator("^[a-zA-Z{1}-[0-9]+$")]
+To implement a VGrain is kind like MS Orlean instead of inherite of clas "Grain" you have to inherite from class "VGrain".
+
+**Grain Id Validation**
+
+In the follow of the ID automatic generation an implementation could add some validator to ensure the id generate follow the rules.
+
+``` csharp
+[VGrainIdRegexValidator("^[a-zA-Z{1}-[0-9]+$")]
+```
+
+**State**
+
+A key distinction between traditional Orleans Grains and Democrite VGrains lies in their flexibility regarding state management and usage. VGrains offer greater adaptability, allowing for more dynamic and flexible system design.
+
+No State:
+``` csharp
+public sealed class ImplementationVGrain : VGrain<IImplementationVGrain> : IImplementationVGrain
+```
+
+Serializable State:
+``` csharp
+public sealed class ImplementationVGrain : VGrain<SerializableState, IImplementationVGrain> : IImplementationVGrain
+```
+
+State with serializable surrogate:
+``` csharp
+public sealed class ImplementationVGrain : VGrain<SerializableState, SerializableStateSurrogate, SerializableStateConverter, IImplementationVGrain> : IImplementationVGrain
+```
+
+> [!NOTE]
+>
+> In Microsoft Orleans, a Surrogate is a simple, serializable structure that serves as a data container. To utilize Surrogates, you must define a  corresponding IConverter class responsible for transforming the original object into a savable Surrogate and vice versa. This approach simplifies state management by eliminating the need for direct serialization of the original object, which might have complex or non-serializable components.
 
 # Sequence
 
+## Defintion
 ## Execution Context
 
 # Execution Handler
+
+## VGrain Direct
+## Sequence
+
 # Trigger / Signal
+
+## Cron
+## Signal
+## Output data
+
+# Practice
