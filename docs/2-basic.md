@@ -295,18 +295,210 @@ public sealed class ImplementationVGrain : VGrain<SerializableState, Serializabl
 
 # Sequence
 
+A **Sequence** is a predefined set of steps that are executed in a specific order. Each step can take input from the previous step and produce output that can be used as input for the next step. 
+
+To run a Sequence, only its unique identifier (Uid) needs to be provided or it's reference Id.
+
 ## Defintion
+
+To configure and test a **sequence** you need to create and register it.
+
+**Build definition**
+```csharp
+var collectorSequence = Sequence.Build("sequence-sni")
+                                // Ask a web URI in input
+                                .RequiredInput<Uri>()
+
+                                // Fetch html page and return it
+                                .Use<IHtmlCollectorVGrain>().Call((a, url, ctx) => a.FetchPageAsync(url, ctx)).Return
+
+                                // Configure inspector on specific pair inspect and extract current value
+                                .Use<IPriceInspectorVGrain>().Configure(currencyPair)
+                                                             .Call((a, page, ctx) => a.SearchValueAsync(page, ctx)).Return
+
+                                // Store the value received into a dedicated statefull grain
+                                .Use<ICurrencyPairVGrain>().Configure(currencyPair)
+                                                           .Call((a, data, ctx) => a.StoreAsync(data, ctx)).Return
+                                .Build();
+```
+
+"collectorSequence" is a definition you can store. <br/>
+For example in the node memory:
+
+```csharp
+.AddInMemoryDefinitionProvider(m =>
+{
+    // Local in node memory setup
+    .SetupSequences(collectorSequence);
+})
+```
+
+A Sequence can perform the following actions:
+
+- **Data Transformation**: Modify or manipulate data without relying on a VGrain.
+- **Signal Sending**: Trigger events or notifications to other systems.
+- **Sequence Invocation**: Execute another predefined Sequence.
+- **Iterative Processing**: Loop through a collection of data, applying a Sequence to each item.
+
 ## Execution Context
+
+The context parameter (ctx) in sequence definitions is a crucial element for managing the execution context of a Sequence. It carries the following information:
+
+- **CancellationToken**: This token allows for graceful cancellation of the Sequence if required.
+- **FlowUid**: A unique identifier shared by all steps within the same Sequence execution.
+- **CurrentExecutionId**: A unique identifier for the specific call within the current Sequence execution.
+- **ParentExecutionId**: The unique identifier of the previous step in the Sequence.
+
+Additionally, the context parameter can be used to store configuration information and data. By calling the *.Configure* method on a step, you can add configuration settings to the **Configuration** property of the context. This configuration can be used to target specific VGrains or other resources.  (cf. [VGrain Id](#vgrain-id-configuration--rules)).
+
+To handle multiple pieces of information that cannot be passed as a single parameter, you can use the PushToContext method to store data within the context. This data can then be retrieved later in the Sequence using the appropriate mechanisms.
 
 # Execution Handler
 
-## VGrain Direct
-## Sequence
+In MS Orleans, you use **IGrainFactory** service to create and call standard grains.
+In Democrite we use **IDemocriteExecutionHandler**.
+
+This service is specifically designed for **VGrains**. It offers two main functionalities:
+- **Direct Grain Calls**: You can directly call a VGrain using its ID, which is automatically resolved based on the current context.
+- **Sequence Execution**: You can initiate a sequence execution, which involves a series of steps that can include VGrain calls.
+
+**VGrain Direct**
+```csharp
+var result = await _executionHandler.VGrain<IStringTestVGrain>()
+                                    .SetInput(input)
+                                    .SetConfiguration(cfg)
+                                    .Call((g, i, ctx) => g.ConcatResultAsync(i, ctx))
+                                    .RunAsync(token);
+```
+
+**Sequence**
+
+```csharp
+var execResult = await this._democriteExecutionHandler.Sequence<string>(simpleSeq.Uid)
+                                                      .SetInput(inputTest)
+                                                      .RunAsync<string>(token);
+```
+
+Each call return a "IExecutionResult" that contains the response value or exception information.
+
+to get the result or throw the exception if occured you have the following method:
+```csharp
+var result = execResult.SafeGetResult();
+```
+
+> [!NOTE]
+>
+> The IExecutionHandler interface is primarily designed for client-side usage. It enables clients to interact with the **Democrite** framework, including executing Sequences and calling VGrains.
 
 # Trigger / Signal
 
-## Cron
+Previously we see how to call a sequence or a VGrain manually but a complex system requiered more automatic way to to it.
+
+**Democrite** offers several built-in mechanisms to support event-driven architectures:
+
+- **Triggers**: Triggers are event-driven components that can be activated by various events, such as timers, signals, or messages from message queues. When activated, a trigger can initiate a sequence of actions, send signals, or perform other tasks.
+
+- **Signals**: Signals are lightweight, asynchronous notifications that can carry small amounts of data. They are often used to trigger actions in other parts of the system, such as logging events or initiating workflows.
+
+- **Doors**: Doors are conditional triggers that listen to one or more signals or doors. When the specified conditions are met, the door emits its own signal, triggering further actions.
+
 ## Signal
-## Output data
+
+To fire a signal you need to create it first with a definition and then use the "ISignalService".
+> [!NOTE]
+> 
+> Democrite offers a signal hierarchy feature that enables you to organize signals into a hierarchical structure. A parent signal can have one or > more child signals. When a child signal is raised, its parent signals are also raised, propagating the event up the hierarchy. This mechanism is > particularly useful for:
+> 
+> - **Centralized Monitoring**: You can monitor high-level parent signals to get an overview of system behavior.
+> - **Specific Event Handling**: Child signals allow you to react to more specific events without being overwhelmed by a flood of generic events.
+
+## Trigger
+
+A trigger must be defined before it can be used. Once defined, the trigger will become active as soon as at least one node in the cluster is ready to process events.
+
+**Cron**
+
+A cron trigger is one who will fire following a formated period of time ([Norme](https://en.wikipedia.org/wiki/Cron)):
+
+```csharp
+// Every minutes between 9h and 18h UTC between monday and friday
+var triggerDefinition = Trigger.Cron("* 9-18 * * mon-fri")
+
+// Every second
+var triggerDefinition = Trigger.Cron("* * * * *")
+```
+
+To enable the "Cron" trigger you need to add the extension library "Democrite.Framework.Node.Cron" and call the method "UseCronTriggers" during the configuration of the engine.
+Example:
+
+```csharp
+
+builder.Host.UseDemocriteNode(b =>
+{
+    b.WizardConfig()
+     .NoCluster()
+     .ConfigureLogging(c => c.AddConsole())
+     
+     // Enabled cron triggers and activate the "second" support
+     .UseCronTriggers(supportSecondCron: true);
+});
+
+```
+
+> [!CAUTION]
+>
+> A Cron jobs typically operate with a minimum interval of 1 minute and use 5 parameters to define the schedule. To achieve higher precision, you can enable second-level scheduling by adding a sixth parameter during the configuration process. This allows you to define Cron jobs that execute at specific seconds within a minute.
+
+**Signal**
+
+Built-in triggers can react to incoming signals.
+
+```csharp
+// Trigger when the signal corresponding to SIGNAL_ID have been fire
+var triggerDefinition = Trigger.Signal(SIGNAL_ID)
+```
+
+> [!NOTE]
+> 
+> The framework uses internal signals that do not require explicit activation.
+
+## Carried Data
+
+Triggers and signals can be used to transmit data. When a trigger or signal is activated, it can carry specific information. For instance, the "NewBlock" signal can include the ID of the newly created block to provide context to the receiving components.
+
+> [!NOTE]
+>
+> To ensure traceability and prevent unintended infinite loops, signals in Democrite maintain a history. When a signal triggers another, the newly created signal carry also the ID and content of the previous signal. This history chain can be useful for debugging and tracing the flow of events. However, it's essential to design signal flows carefully to avoid excessive signal propagation, which can lead to performance bottlenecks and make debugging difficult. By limiting the depth of signal chains and using appropriate filtering mechanisms, you can effectively manage signal propagation and maintain system performance.
+
+Triggers in Democrite are capable of sending data. They can relay incoming messages from signals or stream queues. However, Cron triggers, which operate on a predefined schedule, don't have an inherent source of data. To address this, you can configure a DataSource within the trigger definition. This DataSource can provide the necessary information to be sent by the trigger, ensuring that the trigger can deliver relevant data even without an immediate external event.
+
+Exemple:
+
+```csharp
+Trigger.Cron("* * * * *")
+       
+       // Set the default output to static collection with cicling mode
+       .SetOutput(d => d.StaticCollection<Uri>(new[]
+       {
+           new Uri("https://github.com/Nexai-net/democrite"),
+           new Uri("https://www.amexio-group.com/"),
+           new Uri("https://en.wikipedia.org/wiki/Cron"),
+       }).PullMode(PullModeEnum.Circling))
+
+       .AddTargetSequence(SeqId)
+       .Build();
+```
+
+In this example, the sequence with ID "SeqId" will be triggered every second. Each trigger will receive a URL from a static collection, cycling through the URLs in a round-robin fashion.
+
+> [!NOTE]
+>
+>A trigger can be configured to target multiple destinations, such as sequences, streams, or signals. For each target, you can optionally specify a data source. This data source will provide the input data for the target.
+>
+>If no specific data source is defined for a target, the trigger's default data source will be used. If the trigger itself doesn't have a default data source, the input data associated with the trigger event will be used, if available.
+
+## Others
+
+In addition to built-in triggers, Demoiselle allows you to create custom triggers. This flexibility enables you to tailor triggers to specific use cases. For instance, StreamQueue triggers are designed to monitor data streams and fire events whenever new messages are received. To learn how to create custom triggers, refer to the "Expert" documentation.
 
 # Practice
