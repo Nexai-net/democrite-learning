@@ -27,7 +27,7 @@ namespace Democrite.Practice.Rss.Node.States
         public RssState(string sourceUrl, IEnumerable<RssItemMetaData> items, DateTime lastUpdate)
         {
             this.SourceUrl = sourceUrl;
-            this._items = items?.GroupBy(i => i.HashId)
+            this._items = items?.GroupBy(i => i.Uid)
                                 .ToDictionary(k => k.Key, v => v.OrderByDescending(d => d.LastUpdate).First()) ?? new Dictionary<string, RssItemMetaData>();
 
             this.LastUpdate = lastUpdate;
@@ -67,7 +67,7 @@ namespace Democrite.Practice.Rss.Node.States
         internal void PushItems(IEnumerable<RssItemMetaData> items)
         {
             foreach (var item in items)
-                this._items[item.HashId] = item;
+                this._items[item.Uid] = item;
         }
 
         #endregion

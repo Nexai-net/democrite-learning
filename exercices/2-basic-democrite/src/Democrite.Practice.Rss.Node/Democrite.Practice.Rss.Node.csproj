@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Democrite.Framework.Bag.DebugTools" />
     <PackageReference Include="Democrite.Framework.Builders" />
     <PackageReference Include="Democrite.Framework.Extensions.Mongo" />
     <PackageReference Include="Democrite.Framework.Node" />

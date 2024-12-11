@@ -57,6 +57,17 @@ app.MapPut("inject/rss", async ([FromBody] Uri rssUrl, [FromServices] IDemocrite
     rssInjected.SafeGetResult();
 });
 
+app.MapGet("feed/list", async ([FromServices] IDemocriteExecutionHandler execHandler, CancellationToken token) =>
+{
+    var listExecResult = await execHandler.VGrain<IRssMonitorVGrain>()
+                                          .Call((g, ctx) => g.GetAllRegistredFeedAsync(ctx))
+                                          .RunAsync(token);
+
+    var list = listExecResult.SafeGetResult();
+
+    return list;
+});
+
 app.UseSwaggerUI();
 
 app.Run();

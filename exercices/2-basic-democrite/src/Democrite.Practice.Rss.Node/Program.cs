@@ -17,6 +17,12 @@ var node = DemocriteNode.Create((h, cfg) => cfg.AddJsonFile("AppSettings.json"),
                                          s.AddHttpClient();
                                      })
 
+                                     // Add tools an grain declaration usefull to debug
+                                     .AddDebugTools(LogLevel.Information)
+
+                                     // Activate Cron trigger management
+                                     .UseCronTriggers()
+
                                      // Open to client connection
                                      .ExposeNodeToClient()
 

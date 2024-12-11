@@ -11,11 +11,13 @@ namespace Democrite.Practice.Rss.Node.Models
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public sealed record class RssItem(string Guid,
+    public sealed record class RssItem(string Uid,
                                        string Link,
                                        string Title,
                                        string Description,
+                                       string? Content,
                                        string SourceId,
+                                       IReadOnlyCollection<string> Creators,
                                        DateTime PublishDate,
                                        IReadOnlyCollection<string> Keywords,
                                        IReadOnlyCollection<string> Categories);
@@ -24,6 +26,6 @@ namespace Democrite.Practice.Rss.Node.Models
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public sealed record class RssItemMetaData(string Guid, string Link, DateTime LastUpdate);
+    public sealed record class RssItemMetaData(string Uid, string Link, DateTime LastUpdate);
 
 }
