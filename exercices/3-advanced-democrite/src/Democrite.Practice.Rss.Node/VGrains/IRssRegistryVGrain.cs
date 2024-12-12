@@ -2,24 +2,22 @@
 // The Democrite licenses this file to you under the MIT license.
 // Produce by nexai & community (cf. docs/Teams.md)
 
-namespace Democrite.Practice.Rss.DataContract
+namespace Democrite.Practice.Rss.Node.VGrains
 {
     using Democrite.Framework.Core.Abstractions;
     using Democrite.Framework.Core.Abstractions.Attributes;
+    using Democrite.Practice.Rss.DataContract;
     using Democrite.Practice.Rss.DataContract.Models;
 
-    using Orleans.Concurrency;
-
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-
+    /// <summary>
+    /// Grain used to register all the rss feed stored
+    /// </summary>
     [VGrainIdSingleton]
-    public interface IRssMonitorVGrain : IVGrain
+    internal interface IRssRegistryVGrain : IVGrain, IRssMonitorVGrain
     {
         /// <summary>
-        /// Gets all registred feed asynchronous.
+        /// Register if needing the rss feed
         /// </summary>
-        [ReadOnly]
-        Task<IReadOnlyCollection<RssFeedUrlSource>> GetAllRegistredFeedAsync(IExecutionContext ctx);
+        Task<RssFeedUrlSource> RegisterAsync(Uri rssFeed, IExecutionContext ctx);
     }
 }
