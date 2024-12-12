@@ -17,14 +17,19 @@ To do so go to [docs/1-fondation.md](/docs/1-fondations.md)
 - [Multi Distributed Systems](/docs/1-fondations.md#multi-agents-distributed-systems-mads)
 - [Orleans](/docs/1-fondations.md#microsoft-orleans)
 
-# Incoming
+# Democrite - Basic
 
-- Basic
-    - Definition
-    - VGrains - Agent Type
-    - Sequence
-    - Execution
-    - Trigger / Signal
+Democrite is an orchestration framework based on Microsoft Orleans, as multi-agents distributed system.
+
+More [Information](/docs/2-basic.md)
+
+- [Definition](/docs/2-basic.md#definition)
+- [VGrains - Agent Type](/docs/2-basic.md#vgrains---agent-type)
+- [Sequence](/docs/2-basic.md#sequence)
+- [Execution](/docs/2-basic.md#execution-handler)
+- [Trigger / Signal](/docs/2-basic.md#trigger--signal)
+
+# Incoming
 
 - Advanced
     - StreamQueue
