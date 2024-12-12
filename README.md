@@ -31,8 +31,11 @@ To do so go to [docs/1-fondation.md](/docs/1-fondations.md)
     - Dynamic Definition
     - Artifacts
     - Storage - Repository
+    - Redirection
 
 - Expert
+    - Reference Id
     - Blackboard
     - Yaml Definition Compilation
     - CLI
+    - Framework extensions

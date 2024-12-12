@@ -22,6 +22,7 @@ Otherwise we advice you to follow the framework and package version that will be
 - Each instance exposes an API (Swagger) to manipulate the data.
 - Until all the silos fail, the service must be available through an API.
 - Even after all silos fail, the chat data must remain.
+- Sending a message to a room is restricted to logged-in users who have joined the room. Attempts to send messages by unauthorized users should result in an exception error.
 
 ## API
 
