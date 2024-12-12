@@ -260,7 +260,7 @@ This rule facilitates the management of automatic calls within sequences, trigge
 
 ## Implementation
 
-To implement a VGrain is kind like MS Orlean instead of inherite of clas "Grain" you have to inherite from class "VGrain".
+To implement a VGrain is kind like MS Orlean instead of inherite of clas "Grain" you have to inherite from class "VGrainBase".
 
 **Grain Id Validation**
 

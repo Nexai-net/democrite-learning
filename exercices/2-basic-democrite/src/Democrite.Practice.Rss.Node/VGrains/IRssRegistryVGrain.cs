@@ -19,6 +19,5 @@ namespace Democrite.Practice.Rss.Node.VGrains
         /// Register if needing the rss feed
         /// </summary>
         Task<RssFeedUrlSource> RegisterAsync(Uri rssFeed, IExecutionContext ctx);
-
     }
 }
