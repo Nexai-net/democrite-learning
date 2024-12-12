@@ -71,7 +71,8 @@ var node = DemocriteNode.Create(b =>
 When integrated into an existing host, the framework will be configured as part of the host's startup process and will begin operating when the host is launched. In the standalone scenario, the framework will create and manage its own host environment, requiring you to initiate the startup process.
 
 > [!NOTE]
-> TWhile the configuration process is similar for both Node and Client modes, there are some key differences. In **Node mode**, you'll primarily interact with the **DemocriteNode** configuration, whereas in **Client mode**, you'll use the **DemocriteClient** configuration.
+>
+> While the configuration process is similar for both Node and Client modes, there are some key differences. In **Node mode**, you'll primarily interact with the **DemocriteNode** configuration, whereas in **Client mode**, you'll use the **DemocriteClient** configuration.
 
 ## Node vs Client
 
@@ -229,7 +230,6 @@ While Microsoft Orleans requires manual invocation of grains and their methods, 
 
 This constraint simplifies method invocation and enhances the framework's ability to dynamically determine the appropriate target based on context.
 
-
 Example:
 ``` csharp
 
@@ -247,6 +247,7 @@ Task InvalidDemocriteCall(string poney, string other, IExecutionContext ctx);
 ```
 
 > [!NOTE]
+>
 > This method could be "Generic"
 > ``` csharp
 >
@@ -299,7 +300,7 @@ A **Sequence** is a predefined set of steps that are executed in a specific orde
 
 To run a Sequence, only its unique identifier (Uid) needs to be provided or it's reference Id.
 
-## Defintion
+## Definitions
 
 To configure and test a **sequence** you need to create and register it.
 
@@ -505,7 +506,7 @@ In addition to built-in triggers, Demoiselle allows you to create custom trigger
 
 In this tutorial series, we'll use Democrite to build a web application that scrapes RSS feeds, analyzes content, and provides a basic search function.
 
-**Part 1**: Foundation and RSS Feed Integration
+**Part 1**: Foundation and RSS Feed Integration --> [Practice](/docs/2-basic-practice-democrite.md)
 
 In this initial part, we'll cover:
 
