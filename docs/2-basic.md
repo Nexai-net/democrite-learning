@@ -4,7 +4,7 @@ ___
 <table border="10px !important" align="center">
     <tr border="none">
         <td border="none">
-            <image src="docs/logo.png">
+            <image src="https://raw.githubusercontent.com/Nexai-net/democrite/refs/heads/main/docs/logo.png">
         </td>
         <td border="0">
             <h1 valign='center'>Democrite</h1>
@@ -502,3 +502,20 @@ In this example, the sequence with ID "SeqId" will be triggered every second. Ea
 In addition to built-in triggers, Demoiselle allows you to create custom triggers. This flexibility enables you to tailor triggers to specific use cases. For instance, StreamQueue triggers are designed to monitor data streams and fire events whenever new messages are received. To learn how to create custom triggers, refer to the "Expert" documentation.
 
 # Practice
+
+In this tutorial series, we'll use Democrite to build a web application that scrapes RSS feeds, analyzes content, and provides a basic search function.
+
+**Part 1**: Foundation and RSS Feed Integration
+
+In this initial part, we'll cover:
+
+- **Project Structure**: Setting up the core application structure.
+- **RSS Feed Loading**: Fetching and storing articles from a specified RSS feed.
+- **Auto-Refresh**: Implementing an automatic refresh mechanism to keep the content up-to-date.
+
+Subsequent parts will delve deeper into advanced topics, including:
+
+- **Content Analysis**: Processing and understanding the content of articles.
+- **Search Engine Implementation**: Building a robust search functionality.
+
+<h2>Stay tuned for the advanced tutorial series!</h2>
