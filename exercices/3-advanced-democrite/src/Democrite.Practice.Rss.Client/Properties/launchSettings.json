@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Democrite.Practice.Rss.Client": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:33149;http://localhost:33150"
+    }
+  }
+}
