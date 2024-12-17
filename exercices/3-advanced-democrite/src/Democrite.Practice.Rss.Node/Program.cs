@@ -38,7 +38,12 @@ var node = DemocriteNode.Create((h, cfg) => cfg.AddJsonFile("AppSettings.json"),
                                      .AddPracticeDefinitions()
 
                                      // Define mongodb as default storage point
-                                     .SetupNodeMemories(n => n.UseMongo(StorageTypeEnum.All));
+                                     .SetupNodeMemories(n =>
+                                     {
+                                         n.UseMongo(StorageTypeEnum.All);
+                                     
+                                         n.UseMongoGrainStorage("LookupStorageConfig", buildRepository: true);
+                                     });
                                 });
 
 await using (node)

@@ -11,13 +11,18 @@ namespace Democrite.Practice.Rss.DataContract
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    [VGrainIdSingleton]
+    //[VGrainIdSingleton]
+
+    // A singleton was creating a bottle neck where all the request was going
+    // A state repository will all us to explorer the data base without a single registry point
+    // We pass to stateless worker to let democrite and orleans spawn as many instance as needed
+    [VGrainStatelessWorker]
     public interface IRssMonitorVGrain : IVGrain
     {
         /// <summary>
         /// Gets all registred feed asynchronous.
         /// </summary>
         [Orleans.Concurrency.ReadOnly]
-        Task<IReadOnlyCollection<RssFeedUrlSource>> GetAllRegistredFeedAsync(IExecutionContext ctx);
+        Task<IReadOnlyCollection<UrlSource>> GetAllRegistredFeedAsync(IExecutionContext ctx);
     }
 }

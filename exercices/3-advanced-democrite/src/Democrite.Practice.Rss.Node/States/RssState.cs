@@ -4,6 +4,7 @@
 
 namespace Democrite.Practice.Rss.Node.States
 {
+    using Democrite.Framework.Core.Abstractions.Repositories;
     using Democrite.Practice.Rss.Node.Models;
 
     using System;
@@ -16,6 +17,7 @@ namespace Democrite.Practice.Rss.Node.States
         #region Fields
 
         private readonly Dictionary<string, RssItemMetaData> _items;
+        private readonly string _uid;
 
         #endregion
 
@@ -24,8 +26,9 @@ namespace Democrite.Practice.Rss.Node.States
         /// <summary>
         /// Initializes a new instance of the <see cref="RssState"/> class.
         /// </summary>
-        public RssState(string sourceUrl, IEnumerable<RssItemMetaData> items, DateTime lastUpdate)
+        public RssState(string uid, string sourceUrl, IEnumerable<RssItemMetaData> items, DateTime lastUpdate)
         {
+            this._uid = uid;
             this.SourceUrl = sourceUrl;
             this._items = items?.GroupBy(i => i.Uid)
                                 .ToDictionary(k => k.Key, v => v.OrderByDescending(d => d.LastUpdate).First()) ?? new Dictionary<string, RssItemMetaData>();
@@ -56,7 +59,7 @@ namespace Democrite.Practice.Rss.Node.States
         /// </summary>
         public RssStateSurrogate ToSurrogate()
         {
-            return new RssStateSurrogate(this.SourceUrl, this._items.Values.ToArray(), this.LastUpdate);
+            return new RssStateSurrogate(this._uid, this.SourceUrl, this._items.Values.ToArray(), this.LastUpdate);
         }
 
         #region Tools
@@ -81,9 +84,10 @@ namespace Democrite.Practice.Rss.Node.States
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct RssStateSurrogate(string SourceUrl, 
+    public record struct RssStateSurrogate(string Uid,
+                                           string SourceUrl, 
                                            IReadOnlyCollection<RssItemMetaData> Items, 
-                                           DateTime LastUpdate);
+                                           DateTime LastUpdate) : IEntityWithId<string>;
 
     [RegisterConverter]
     internal sealed class RssStateConverter : IConverter<RssState, RssStateSurrogate>
@@ -91,7 +95,7 @@ namespace Democrite.Practice.Rss.Node.States
         /// <inheritdoc />
         public RssState ConvertFromSurrogate(in RssStateSurrogate surrogate)
         {
-            return new RssState(surrogate.SourceUrl, surrogate.Items, surrogate.LastUpdate);
+            return new RssState(surrogate.Uid, surrogate.SourceUrl, surrogate.Items, surrogate.LastUpdate);
         }
 
         /// <inheritdoc />

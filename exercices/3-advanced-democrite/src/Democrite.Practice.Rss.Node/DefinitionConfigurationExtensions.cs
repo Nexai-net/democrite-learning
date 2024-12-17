@@ -27,7 +27,7 @@ namespace Democrite.Framework.Configurations
             var loadRssFeedSeq = Sequence.Build("load-rss-items", fixUid: new Guid("52150059-8000-4A19-8416-A3DED9D368AE"))
 
                                          // Define the input expected type
-                                         .RequiredInput<RssFeedUrlSource>()
+                                         .RequiredInput<UrlSource>()
 
                                          // Use the vgrain IRssVGrain with the key matching "HashId" property on the input objet
                                          .Use<IRssVGrain>().ConfigureFromInput(i => i.HashId)
@@ -58,7 +58,11 @@ namespace Democrite.Framework.Configurations
                                     .RequiredInput<Uri>()
 
                                     // Use the vgrain IRssRegistryVGrain without specific key (singleton) and call the method RegisterAsync in it to register the URL and produce a normalize Hash Id from the URL
-                                    .Use<IRssRegistryVGrain>().Call((g, i, ctx) => g.RegisterAsync(i, ctx)).Return
+                                    //.Use<IRssRegistryVGrain>().Call((g, i, ctx) => g.RegisterAsync(i, ctx)).Return
+
+                                    // No more need to register the url due to repository system
+                                    // We are using instead a generic vgrain that could easily be re-use
+                                    .Use<IHashToolVGrain>().Call((g, i, ctx) => g.HashAsync(i, ctx)).Return
 
                                     // Call the sequence load-rss-items to load all the rss feed items
                                     .CallSequence(loadRssFeedSeq.Uid).ReturnNoData
@@ -79,8 +83,8 @@ namespace Democrite.Framework.Configurations
                                               */
                                              .Use<IRssMonitorVGrain>().Call((g, ctx) => g.GetAllRegistredFeedAsync(ctx)).Return
 
-                                             // GetAllRegistredFeedAsync return a collection of RssFeedUrlSource containing the URL and its HashId associate
-                                             .Foreach(IType<RssFeedUrlSource>.Default, f =>
+                                             // GetAllRegistredFeedAsync return a collection of UrlSource containing the URL and its HashId associate
+                                             .Foreach(IType<UrlSource>.Default, f =>
                                              {
                                                  // For each feed URL call the sequence load-rss-items to reload the feed information
                                                  return f.CallSequence(loadRssFeedSeq.Uid).ReturnNoData;

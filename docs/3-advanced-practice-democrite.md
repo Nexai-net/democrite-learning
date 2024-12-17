@@ -10,6 +10,13 @@ ___
  .UseStreamQueues()
 
 # Repository instead of registry
+
+// Change from RssFeedUrlSource to simply UrlSource to be reusable
+// Remove the regitry but implementent a new grain RssMonitorVGrain
+
 # Unit Test
 # Python artifact
+
+https://stackoverflow.com/questions/328356/extracting-text-from-html-file-using-python
+
 # Search engine

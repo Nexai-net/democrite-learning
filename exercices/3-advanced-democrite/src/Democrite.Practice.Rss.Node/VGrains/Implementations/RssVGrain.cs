@@ -46,7 +46,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <param name="logger">This is the logger service to let log about working</param>
         /// <param name="httpClientFactory">This is the factory service used to produce a safe reusable <see cref="IHttpClient"/> to download the rss xml feed with a web URL</param>
         /// <param name="persistentState">This service ensure the storage of this VGrain state. <see cref="PersistentStateAttribute"> provide some information to correctly resolve the correct IPersistentState</param>
-        public RssVGrain([PersistentState("Rss")] IPersistentState<RssStateSurrogate> persistentState,
+        public RssVGrain([PersistentState("Rss", "LookupStorageConfig")] IPersistentState<RssStateSurrogate> persistentState,
                          ILogger<IRssVGrain> logger,
                          IHttpClientFactory httpClientFactory,
                          ITimeManager timeManager,
@@ -75,7 +75,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 
                 // Cloning using surrogate to let the storage responsability to RssState 
                 var copy = this.State.ToSurrogate();
-                var newState = new RssState(source.ToString(), copy.Items, this._timeManager.UtcNow);
+                var newState = new RssState(this.GetGrainId().Key.ToString()!, source.ToString(), copy.Items, this._timeManager.UtcNow);
 
                 await base.PushStateAsync(newState, executionContext.CancellationToken);
             }

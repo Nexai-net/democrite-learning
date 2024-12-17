@@ -6,18 +6,17 @@ namespace Democrite.Practice.Rss.Node.VGrains
 {
     using Democrite.Framework.Core.Abstractions;
     using Democrite.Framework.Core.Abstractions.Attributes;
-    using Democrite.Practice.Rss.DataContract;
     using Democrite.Practice.Rss.DataContract.Models;
 
     /// <summary>
-    /// Grain used to register all the rss feed stored
+    /// Define a reusage vgrain responsible to produce hash of requested data
     /// </summary>
-    [VGrainIdSingleton]
-    internal interface IRssRegistryVGrain : IVGrain, IRssMonitorVGrain
+    [VGrainStatelessWorker]
+    public interface IHashToolVGrain : IVGrain
     {
         /// <summary>
-        /// Register if needing the rss feed for future reload or investigation
+        /// Produce a hash id from a <see cref="Uri"/>
         /// </summary>
-        Task<RssFeedUrlSource> RegisterAsync(Uri rssFeed, IExecutionContext ctx);
+        Task<UrlSource> HashAsync(Uri source, IExecutionContext context);
     }
 }

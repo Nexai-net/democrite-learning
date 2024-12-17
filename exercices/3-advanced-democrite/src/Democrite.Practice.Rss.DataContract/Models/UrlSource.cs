@@ -11,5 +11,5 @@ namespace Democrite.Practice.Rss.DataContract.Models
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct RssFeedUrlSource(Uri SourceUri, string HashId);
+    public record struct UrlSource(Uri SourceUri, string HashId);
 }
