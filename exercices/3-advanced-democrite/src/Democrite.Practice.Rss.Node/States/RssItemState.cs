@@ -30,10 +30,7 @@ namespace Democrite.Practice.Rss.Node.States
         /// Initializes a new instance of the <see cref="RssItemState"/> class.
         /// </summary>
         public RssItemState(IEnumerable<RssItem>? history,
-                            RssItem? current,
-                            string SourceId,
-                            string ItemId,
-                            DateTime? LastUpdate)
+                            RssItem? current)
         {
             this._history = history?.ToList() ?? new List<RssItem>();
             this.Current = current;
@@ -85,6 +82,9 @@ namespace Democrite.Practice.Rss.Node.States
         #endregion
     }
 
+    /// <summary>
+    /// Simple surrogate used to easily store (serialize) all the <see cref="RssItemState"/> information
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]

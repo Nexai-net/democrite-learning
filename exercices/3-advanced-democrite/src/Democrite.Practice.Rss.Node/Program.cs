@@ -1,5 +1,4 @@
 ﻿using Democrite.Framework;
-using Democrite.Framework.Builders;
 using Democrite.Framework.Configurations;
 using Democrite.Framework.Core.Abstractions.Enums;
 
@@ -18,13 +17,13 @@ var node = DemocriteNode.Create((h, cfg) => cfg.AddJsonFile("AppSettings.json"),
                                          s.AddHttpClient();
                                      })
 
-                                     // Add tools an grain declaration usefull to debug
+                                     // Add tools - grains declaration usefull to debug
                                      .AddDebugTools(LogLevel.Information)
 
                                      // Activate Cron trigger management
                                      .UseCronTriggers()
 
-                                     // Open to client connection
+                                     // Allow client connection to this node
                                      .ExposeNodeToClient()
 
                                      // Setup all the need definitions

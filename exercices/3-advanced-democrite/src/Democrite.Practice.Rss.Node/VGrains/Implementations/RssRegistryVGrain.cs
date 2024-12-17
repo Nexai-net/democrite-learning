@@ -6,8 +6,6 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 {
     using Democrite.Framework.Core;
     using Democrite.Framework.Core.Abstractions;
-    using Democrite.Framework.Core.Abstractions.Attributes;
-    using Democrite.Framework.Core.Abstractions.Repositories;
     using Democrite.Practice.Rss.DataContract.Models;
     using Democrite.Practice.Rss.Node.Models;
     using Democrite.Practice.Rss.Node.States;
@@ -35,6 +33,9 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <summary>
         /// Initializes a new instance of the <see cref="RssRegistryVGrain"/> class.
         /// </summary>
+        /// <param name="hashService">This is the common service to produce Hash base on content (by default SHA256 + Unicity values).</param>
+        /// <param name="logger">This is the logger service to let log about working</param>
+        /// <param name="persistentState">This service ensure the storage of this VGrain state. <see cref="PersistentStateAttribute"> provide some information to correctly resolve the correct IPersistentState</param>
         public RssRegistryVGrain([PersistentState("Rss")] IPersistentState<RssRegistryStateSurrogate> persistentState,
                                  ILogger<IRssRegistryVGrain> logger,
                                  IHashService hashService)

@@ -16,7 +16,7 @@ namespace Democrite.Practice.Rss.Node.VGrains
     internal interface IRssRegistryVGrain : IVGrain, IRssMonitorVGrain
     {
         /// <summary>
-        /// Register if needing the rss feed
+        /// Register if needing the rss feed for future reload or investigation
         /// </summary>
         Task<RssFeedUrlSource> RegisterAsync(Uri rssFeed, IExecutionContext ctx);
     }

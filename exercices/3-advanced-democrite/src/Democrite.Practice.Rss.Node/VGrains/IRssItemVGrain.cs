@@ -15,7 +15,8 @@ namespace Democrite.Practice.Rss.Node.VGrains
     /// VGrain dedicated to each rss item
     /// </summary>
     /// <remarks>
-    ///     Use Rss link hash ad identifier
+    ///     Use Rss link hash identifier, the hash is produce by the implementation of <see cref="IRssVGrain"/> by combining the feed Hash id to it.
+    ///     This ensure that item with same "Guid" property from different source are not identify are identical
     /// </remarks>
     [VGrainIdFormat(IdFormatTypeEnum.String, FirstParameterTemplate = "{executionContext.Configuration}")]
     public interface IRssItemVGrain : IVGrain
