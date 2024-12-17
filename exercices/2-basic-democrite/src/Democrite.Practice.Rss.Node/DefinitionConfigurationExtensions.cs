@@ -13,7 +13,7 @@ namespace Democrite.Framework.Configurations
 
     using System;
 
-    public static class DefintionConfigurationExtensions
+    public static class DefinitionConfigurationExtensions
     {
         /// <summary>
         /// Generate needed definition and store it in the node memory
@@ -36,14 +36,16 @@ namespace Democrite.Framework.Configurations
                                          // LoadAsync Methods will returned all the items parsed in objects RssItem
                                          .Foreach(IType<RssItem>.Default, f =>
                                          {
+                                             // 'f' is a sub-sequence builder auto configured based on collection type IType<RssItem>.Default
+
                                              // Foreach RssItem we use the IRssItemVGrain VGrain with the key matching RssItem UID (Hash combine of feed Uid and Item Guid (XML property)
                                              return f.Use<IRssItemVGrain>().ConfigureFromInput(i => i!.Uid)
                                                                            
                                                                            // Call in the VGrain IRssItemVGrain the method UpdateAsync to store or update the current RssItem Content
                                                                            .Call((g, i, ctx) => g.UpdateAsync(i!, ctx)).Return
 
-                                                                           // Fire a signal with RssItem id information for future threatment
-                                                                           .FireSignal(PracticeConstants.RssItemUpdatedSignalId).RelayMessage();
+                                                     // Fire a signal with RssItem id information for future threatment
+                                                     .FireSignal(PracticeConstants.RssItemUpdatedSignalId).RelayMessage();
                                          })
                                          .Build();
 

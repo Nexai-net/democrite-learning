@@ -30,10 +30,12 @@ namespace Democrite.Practice.Rss.Node.States
         /// Initializes a new instance of the <see cref="RssItemState"/> class.
         /// </summary>
         public RssItemState(IEnumerable<RssItem>? history,
-                            RssItem? current)
+                            RssItem? current,
+                            DateTime? lastUpdate)
         {
             this._history = history?.ToList() ?? new List<RssItem>();
             this.Current = current;
+            this.LastUpdateTime = lastUpdate ?? DateTime.UtcNow;
         }
 
         #endregion
@@ -99,8 +101,6 @@ namespace Democrite.Practice.Rss.Node.States
         {
             return new RssItemState(surrogate.History,
                                     surrogate.Current,
-                                    surrogate.Current?.SourceId ?? "",
-                                    surrogate.Current?.Uid ?? "",
                                     surrogate.LastUpdate);
         }
 

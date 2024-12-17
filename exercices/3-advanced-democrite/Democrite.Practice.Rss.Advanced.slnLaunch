@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Default",
+    "Projects": [
+      {
+        "Path": "src\\Democrite.Practice.Rss.Node\\Democrite.Practice.Rss.Node.csproj",
+        "Action": "Start",
+        "DebugTarget": "Democrite.Practice.Rss.Node"
+      },
+      {
+        "Path": "src\\Democrite.Practice.Rss.Client\\Democrite.Practice.Rss.Client.csproj",
+        "Action": "Start",
+        "DebugTarget": "Democrite.Practice.Rss.Client"
+      }
+    ]
+  }
+]

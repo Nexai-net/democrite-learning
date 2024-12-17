@@ -513,6 +513,8 @@ In addition to built-in triggers, Demoiselle allows you to create custom trigger
 
 # Practice
 
+// TDB : Pre-practice to learn more progressivelly democrite migrate Chat practice from orleans to democrite
+
 In this tutorial series, we'll use Democrite to build a web application that scrapes RSS feeds, analyzes content, and provides a basic search function.
 
 **Part 1**: Foundation and RSS Feed Integration --> [Practice](/docs/2-basic-practice-democrite.md)

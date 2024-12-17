@@ -23,6 +23,7 @@
     <PackageReference Include="Democrite.Framework.Extensions.Mongo" />
     <PackageReference Include="Democrite.Framework.Node" />
     <PackageReference Include="Democrite.Framework.Node.Cron" />
+    <PackageReference Include="Democrite.Framework.Node.StreamQueue" />
     <PackageReference Include="Microsoft.Extensions.Http" />
   </ItemGroup>
 

@@ -71,20 +71,29 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 
             if (string.IsNullOrEmpty(this.State!.SourceUrl))
             {
+                // This scope ensure at the first call that source URL is setup
+
+                // Cloning using surrogate to let the storage responsability to RssState 
                 var copy = this.State.ToSurrogate();
                 var newState = new RssState(source.ToString(), copy.Items, this._timeManager.UtcNow);
+
                 await base.PushStateAsync(newState, executionContext.CancellationToken);
             }
 
+            // Get HttpClient from factory to ensure correct re-usability and connexion sharing
             var client = this._clientFactory.CreateClient();
 
-            var response = await client.GetAsync(source.ToString());
+            var response = await client.GetAsync(source.ToString(), executionContext.CancellationToken);
 
+            // This method correctly raise dedicated exception is server return http code different than 200
             response.EnsureSuccessStatusCode();
 
+            // We assume the target will only return a xml string content
             var contentStr = await response.Content.ReadAsStringAsync(executionContext.CancellationToken);
 
-            var items = await ParseRssDataAsync(contentStr);
+            var items = await ParseRssDataAsync(contentStr, executionContext.CancellationToken);
+
+            executionContext.CancellationToken.ThrowIfCancellationRequested();
 
             this.State.PushItems(items.Select(i => new RssItemMetaData(i.Uid, i.Link, this._timeManager.UtcNow)));
             await PushStateAsync(executionContext.CancellationToken);
@@ -97,7 +106,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <summary>
         /// Parses the RSS data.
         /// </summary>
-        private async ValueTask<IReadOnlyCollection<RssItem>> ParseRssDataAsync(string contentStr)
+        private async ValueTask<IReadOnlyCollection<RssItem>> ParseRssDataAsync(string contentStr, CancellationToken token)
         {
             var grainId = this.GetGrainId().Key.ToString();
 
@@ -115,6 +124,8 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 
             foreach (var item in channels.Elements("item"))
             {
+                token.ThrowIfCancellationRequested();
+
                 var title = item.Elements("title").FirstOrDefault();
                 var link = item.Elements("link").FirstOrDefault();
                 var guid = item.Elements("guid").FirstOrDefault();

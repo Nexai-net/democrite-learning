@@ -20,6 +20,14 @@ var node = DemocriteNode.Create((h, cfg) => cfg.AddJsonFile("AppSettings.json"),
                                      // Add tools - grains declaration usefull to debug
                                      .AddDebugTools(LogLevel.Information)
 
+                                     .SetupClusterOptions(o =>
+                                     {
+                                         o.AddConsoleSiloTitleInfo();
+                                     })
+
+                                     // Activate Stream Trigger management and configure the default stream in memory
+                                     .UseStreamQueues()
+
                                      // Activate Cron trigger management
                                      .UseCronTriggers()
 

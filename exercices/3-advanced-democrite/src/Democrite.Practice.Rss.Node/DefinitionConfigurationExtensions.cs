@@ -5,6 +5,7 @@
 // keep : Democrite.Framework.Configurations
 namespace Democrite.Framework.Configurations
 {
+    using Democrite.Framework.Bag.DebugTools;
     using Democrite.Framework.Builders;
     using Democrite.Practice.Rss.DataContract;
     using Democrite.Practice.Rss.DataContract.Models;
@@ -12,15 +13,16 @@ namespace Democrite.Framework.Configurations
     using Democrite.Practice.Rss.Node.VGrains;
 
     using System;
+    using System.Diagnostics;
 
-    public static class DefintionConfigurationExtensions
+    public static class DefinitionConfigurationExtensions
     {
         /// <summary>
         /// Generate needed definition and store it in the node memory
         /// </summary>
         public static IDemocriteNodeWizard AddPracticeDefinitions(this IDemocriteNodeWizard builder)
         {
-            var rssItemUpdated = Signal.Create("rss-item-updated", fixUid: PracticeConstants.RssItemUpdatedSignalId);
+            var rssItemUpdated = Signal.Create(PracticeConstants.RssItemUpdatedSignalId);
 
             var loadRssFeedSeq = Sequence.Build("load-rss-items", fixUid: new Guid("52150059-8000-4A19-8416-A3DED9D368AE"))
 
@@ -36,14 +38,17 @@ namespace Democrite.Framework.Configurations
                                          // LoadAsync Methods will returned all the items parsed in objects RssItem
                                          .Foreach(IType<RssItem>.Default, f =>
                                          {
+                                             // 'f' is a sub-sequence builder auto configured based on collection type IType<RssItem>.Default
+
                                              // Foreach RssItem we use the IRssItemVGrain VGrain with the key matching RssItem UID (Hash combine of feed Uid and Item Guid (XML property)
                                              return f.Use<IRssItemVGrain>().ConfigureFromInput(i => i!.Uid)
-                                                                           
-                                                                           // Call in the VGrain IRssItemVGrain the method UpdateAsync to store or update the current RssItem Content
-                                                                           .Call((g, i, ctx) => g.UpdateAsync(i!, ctx)).Return
 
-                                                                           // Fire a signal with RssItem id information for future threatment
-                                                                           .FireSignal(PracticeConstants.RssItemUpdatedSignalId).RelayMessage();
+                                                                           // Call in the VGrain IRssItemVGrain the method UpdateAsync to store or update the current RssItem Content
+                                                                           .Call((g, i, ctx) => g.UpdateAsync(i!, ctx)).Return;
+
+                                                   // Fire a signal with RssItem id information for future threatment
+                                                   // The fire is now done the IRssItemVGrain only when the data have changed
+                                                   //.FireSignal(PracticeConstants.RssItemUpdatedSignalId).RelayMessage();
                                          })
                                          .Build();
 
@@ -87,6 +92,38 @@ namespace Democrite.Framework.Configurations
                                            .AddTargetSequence(refreshAllFeedsSeq.Uid)
                                            .Build();
 
+            // Define a stream queue based on default configuration
+            // Without any orlean configuration the stream will be persisted in the Cluster memory
+            // Meaning if all nodes cluster are down the message in the stream queue will be lost
+            var rssItemIndexationStream = StreamQueue.CreateFromDefaultStream("indexation-queue", "indexation-stream-key", fixUid: new Guid("E5881B0B-3749-4B18-8B0C-3B734F6373AF"));
+
+            // Define a trigger that will listen a signal a relay the signal's content to a stream queue for future treatments
+            var triggerToInjectInStreamQueue = Trigger.Signal(rssItemUpdated.SignalId, "from-signal-to-queue", fixUid: new Guid("D25CF6FF-C1D5-473D-B261-000F4A748B8E"))
+                                                      .AddTargetStreams(rssItemIndexationStream)
+                                                      .Build();
+
+            var rssItemIndexationSequence = Sequence.Build("rss-item-indexation", fixUid: new Guid("469E8121-CCFA-49DB-9582-1AF66C5C78AB"))
+
+                                                    // Define that incomming input MUST be of type UrlRssItem
+                                                    .RequiredInput<UrlRssItem>()
+                                                    
+                                                    // VGrain from bag "debug", this vgrain will simply display on the log the input and/or the execution context informations 
+                                                    .Use<IDisplayInfoVGrain>().Call((g, i, ctx) => g.DisplayCallInfoAsync(i, ctx)).Return
+                                                    
+                                                    .Build();
+
+            var triggerFromStreamQueue = Trigger.Stream(rssItemIndexationStream, "from-queue-to-indexation", fixUid: new Guid("DB443A95-6185-4F70-8682-302E56CAB15A"))
+#if DEBUG
+                                                // Allow only 1 message to be process (3 if debugger is not attached) at the same time
+                                                .MaxConcurrentProcess(Debugger.IsAttached ? (uint)1 : (uint)3)
+#else
+                                                // Allow maximum 3* messages to be process at same time
+                                                //  * This value will increase by the cluster size. Example 4 nodes in the cluster then concurrent message could be 3 * 4 = 12 at same time
+                                                .MaxConcurrentFactorClusterRelativeProcess(3)
+#endif
+                                                .AddTargetSequence(rssItemIndexationSequence)
+                                                .Build();
+
 #if DEBUG
             // Automatically display in the console when a signal flagged is fire
             builder.ShowSignals(rssItemUpdated);
@@ -97,6 +134,10 @@ namespace Democrite.Framework.Configurations
                 p.SetupSignals(rssItemUpdated);
                 p.SetupTriggers(autoUpdateTrigger);
                 p.SetupSequences(importSeq, loadRssFeedSeq, refreshAllFeedsSeq);
+
+                p.SetupStreamQueues(rssItemIndexationStream);
+                p.SetupSequences(rssItemIndexationSequence);
+                p.SetupTriggers(triggerToInjectInStreamQueue, triggerFromStreamQueue);
             });
 
             return builder;

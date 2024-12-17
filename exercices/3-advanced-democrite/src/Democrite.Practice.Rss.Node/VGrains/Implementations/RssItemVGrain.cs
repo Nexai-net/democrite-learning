@@ -6,6 +6,8 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 {
     using Democrite.Framework.Core;
     using Democrite.Framework.Core.Abstractions;
+    using Democrite.Framework.Core.Abstractions.Signals;
+    using Democrite.Practice.Rss.DataContract;
     using Democrite.Practice.Rss.Node.Models;
     using Democrite.Practice.Rss.Node.States;
 
@@ -22,6 +24,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         #region Fields
         
         private readonly ITimeManager _timeManager;
+        private readonly ISignalService _signalService;
 
         #endregion
 
@@ -33,12 +36,15 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <param name="timeManager">This is the service to privide time information.</param>
         /// <param name="logger">This is the logger service to let log about working</param>
         /// <param name="persistentState">This service ensure the storage of this VGrain state. <see cref="PersistentStateAttribute"> provide some information to correctly resolve the correct IPersistentState</param>
+        /// <paramref name="signalService"/>This service allow us to fire a signal.
         public RssItemVGrain([PersistentState("Rss")] IPersistentState<RssItemStateSurrogate> persistentState,
                              ILogger<IRssItemVGrain> logger,
-                             ITimeManager timeManager) 
+                             ITimeManager timeManager,
+                             ISignalService signalService) 
             : base(logger, persistentState)
         {
             this._timeManager = timeManager;
+            this._signalService = signalService;
         }
 
         #endregion
@@ -59,7 +65,13 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
             if (hasChanged)
                 await PushStateAsync(executionContext.CancellationToken);
 
-            return new UrlRssItem(item.Uid, item.Link);
+            var itemResult = new UrlRssItem(item.Uid, item.Link);
+
+            // The content have changed then signal is fired to trigger different processing
+            if (hasChanged)
+                await this._signalService.Fire(PracticeConstants.RssItemUpdatedSignalId, itemResult, executionContext.CancellationToken, this);
+
+            return itemResult;
         }
 
         #endregion
