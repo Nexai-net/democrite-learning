@@ -21,7 +21,7 @@ To do so go to [docs/1-fondation.md](/docs/1-fondations.md)
 
 Democrite is an orchestration framework based on Microsoft Orleans, as multi-agents distributed system.
 
-More [Information](/docs/2-basic.md)
+Go to [/docs/2-basic.md](/docs/2-basic.md)
 
 - [Definition](/docs/2-basic.md#definition)
 - [VGrains - Agent Type](/docs/2-basic.md#vgrains---agent-type)
@@ -29,18 +29,22 @@ More [Information](/docs/2-basic.md)
 - [Execution](/docs/2-basic.md#execution-handler)
 - [Trigger / Signal](/docs/2-basic.md#trigger--signal)
 
+# Advanced
+
+Go to [/docs/3-advanced.md](/docs/3-advanced.md)
+
+- [StreamQueue](/docs/3-advanced.md#streamqueue)
+- [Dynamic Definition](/docs/3-advanced.md#dynamic-definition)
+- [Artifacts](/docs/3-advanced.md#artifacts)
+- [Storage - Repository](/docs/3-advanced.md#storage---repository)
+
+
 # Incoming
 
-- Advanced
-    - StreamQueue
-    - Dynamic Definition
-    - Artifacts
-    - Storage - Repository
-    - Redirection
 
 - Expert
-    - Reference Id
     - Blackboard
+    - Reference Id
     - Yaml Definition Compilation
     - CLI
     - Framework extensions

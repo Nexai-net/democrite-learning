@@ -6,6 +6,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
 {
     using Democrite.Framework.Core;
     using Democrite.Framework.Core.Abstractions;
+    using Democrite.Framework.Core.Abstractions.Repositories;
     using Democrite.Practice.Rss.Node.Models;
     using Democrite.Practice.Rss.Node.States;
 
