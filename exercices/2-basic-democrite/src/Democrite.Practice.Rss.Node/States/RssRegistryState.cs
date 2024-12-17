@@ -65,6 +65,9 @@ namespace Democrite.Practice.Rss.Node.States
         #endregion
     }
 
+    /// <summary>
+    /// Simple surrogate used to easily store (serialize) all the <see cref="RssRegistryState"/> information
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]

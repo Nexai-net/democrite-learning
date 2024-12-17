@@ -74,11 +74,16 @@ namespace Democrite.Practice.Rss.Node.States
         #endregion
     }
 
+    /// <summary>
+    /// Simple surrogate used to easily store (serialize) all the <see cref="RssState"/> information
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct RssStateSurrogate(string SourceUrl, IReadOnlyCollection<RssItemMetaData> Items, DateTime LastUpdate);
+    public record struct RssStateSurrogate(string SourceUrl, 
+                                           IReadOnlyCollection<RssItemMetaData> Items, 
+                                           DateTime LastUpdate);
 
     [RegisterConverter]
     internal sealed class RssStateConverter : IConverter<RssState, RssStateSurrogate>

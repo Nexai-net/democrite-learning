@@ -22,7 +22,7 @@ namespace Democrite.Practice.Rss.Node.VGrains
     public interface IRssVGrain : IVGrain
     {
         /// <summary>
-        /// Parses the RSS to produce <see cref="RssItem"/>
+        /// Download the RSS feed XML and parsed it to produce associates <see cref="RssItem"/>
         /// </summary>
         Task<IReadOnlyCollection<RssItem>> LoadAsync(Uri source, IExecutionContext<string> executionContext);
     }

@@ -8,8 +8,6 @@ namespace Democrite.Practice.Rss.DataContract
     using Democrite.Framework.Core.Abstractions.Attributes;
     using Democrite.Practice.Rss.DataContract.Models;
 
-    using Orleans.Concurrency;
-
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -19,7 +17,7 @@ namespace Democrite.Practice.Rss.DataContract
         /// <summary>
         /// Gets all registred feed asynchronous.
         /// </summary>
-        [ReadOnly]
+        [Orleans.Concurrency.ReadOnly]
         Task<IReadOnlyCollection<RssFeedUrlSource>> GetAllRegistredFeedAsync(IExecutionContext ctx);
     }
 }

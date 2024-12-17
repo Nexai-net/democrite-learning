@@ -15,7 +15,7 @@ In this initial part, we'll cover:
 
 ## Specifications
 
-- Use Democrite (Attention: you may need to enable the pre-release option)
+- Use Democrite (Attention: you may need to enable the pre-release option in nuget to install democrite packages)
 - Create two binaries: a client and a node
 - Allow injecting an RSS feed via the API using its URL (e.g., [invalid URL removed])
 - Load the XML RSS file, parse it, and store the RSS items.
@@ -79,7 +79,9 @@ NuGet Dependencies:
 
 - **Democrite.Framework.Core.Abstractions**: This library is the root of all the democrite framwork and contains the interface, attribute definitions.
 
-this projet MUST be referenced by the client and the node.
+> [!NOTE]
+>
+> This projet MUST be referenced by the client and the node.
 
 ## API
 
@@ -108,8 +110,8 @@ Use mimimal api like in [fondation orleans practice](/docs/1-fondations-practice
 
 |Name (SNI)|Input|Output|Goal|
 |--|--|--|--|
-|load-rss-items|RssFeedUrlSource|None|This sequence take a feed url load the items and foreach item store its content|
-|import-rss|Uri|None|This sequence take a feed url store it in the **IRssRegistryVGrain** and call sequence **load-rss-items** the load it|
+|load-rss-items|RssFeedUrlSource|None|This sequence take a feed url load the items and for each item store its content|
+|import-rss|Uri|None|This sequence take a feed url, store it in the **IRssRegistryVGrain** and call sequence **load-rss-items** the load it|
 |refresh-all-inject-feeds|None|None|This sequence will be called by the trigger to get all the rss feed urls and call sequence **load-rss-items** the load them|
 
 <br/>
@@ -131,12 +133,15 @@ Use mimimal api like in [fondation orleans practice](/docs/1-fondations-practice
 
 ## Data Models
 
-In this part we will see the model structure reference on the guidance future.
+In this part we will see the model structure reference and used.
 
 Those following data container are only used in node side.
 
 ``` csharp
 
+    /// <summary>
+    /// Data container responsible to carray all information about an item from an rss feed url
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]
@@ -152,23 +157,26 @@ Those following data container are only used in node side.
                                        IReadOnlyCollection<string> Keywords,
                                        IReadOnlyCollection<string> Categories);
 
+    /// <summary>
+    /// Data container responsible to carry minimal information about an item from an rss feed url
+    /// </summary>
+    /// <remarks>
+    ///     This data container is used in the RssVGrain state to a list of item associate to this source without managing its content.
+    /// </remarks>
     [Immutable]
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
     public sealed record class RssItemMetaData(string Uid, string Link, DateTime LastUpdate);
 
+    /// <summary>
+    /// Data container responsible to carry minimal information about an item from an rss feed url in sequence steps
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct UrlData(Uri SourceUrl, string Data);
-
-    [Immutable]
-    [Serializable]
-    [GenerateSerializer]
-    [ImmutableObject(true)]
-    public record struct UrlRssItem(string Guid, string Link);
+    public record struct UrlRssItem(string Uid, string Link);
 
 ```
 
@@ -176,6 +184,9 @@ The Following data container are used by the client and the node, is should be p
 
 ``` csharp
 
+    /// <summary>
+    /// Data container responsible to carry minimal information about a rss feed.
+    /// </summary>
     [Immutable]
     [Serializable]
     [GenerateSerializer]
@@ -451,7 +462,7 @@ Now that you understand how to configure clients and nodes, and implement VGrain
 To Simplify the Setup we will write the definitions in code and store them in the node in memory storage.
 To ensure each node have the same definitions we will for each definitions a fix UID.
 
-A good practice is also to create an extensions method that will configure all of them.
+A good practice is also to create an **extensions method** of **IDemocriteNodeWizard** that will configure all of them.
 
 ``` csharp
 // Copyright (c) Nexai.
@@ -471,46 +482,74 @@ namespace Democrite.Framework.Configurations
 
     public static class DefintionConfigurationExtensions
     {
+        /// <summary>
+        /// Generate needed definition and store it in the node memory
+        /// </summary>
         public static IDemocriteNodeWizard AddPracticeDefinitions(this IDemocriteNodeWizard builder)
         {
             var rssItemUpdated = Signal.Create("rss-item-updated", fixUid: PracticeConstants.RssItemUpdatedSignalId);
 
             var loadRssFeedSeq = Sequence.Build("load-rss-items", fixUid: new Guid("52150059-8000-4A19-8416-A3DED9D368AE"))
-                                         // Define the input the sequence is expecting
+
+                                         // Define the input expected type
                                          .RequiredInput<RssFeedUrlSource>()
 
-                                         // Call loadasync method on the vgrain IRssVGrain with the key corresponding to source id hash
+                                         // Use the vgrain IRssVGrain with the key matching "HashId" property on the input objet
                                          .Use<IRssVGrain>().ConfigureFromInput(i => i.HashId)
+
+                                                           // Call in the VGrain IRssVGrain the method LoadAsync to load and parse the RSS XML target by the URL in property "SourceUri"
                                                            .Call((g, i, ctx) => g.LoadAsync(i.SourceUri, ctx)).Return
 
-                                         // Loop for each items and apply the following sub-sequence
+                                         // LoadAsync Methods will returned all the items parsed in objects RssItem
                                          .Foreach(IType<RssItem>.Default, f =>
                                          {
-                                             // For each item update the loaded information calling method UpdateAsync
-                                             // on vgrain IRssItemVGrain with the key corresponding the id guid hash
+                                             // Foreach RssItem we use the IRssItemVGrain VGrain with the key matching RssItem UID (Hash combine of feed Uid and Item Guid (XML property)
                                              return f.Use<IRssItemVGrain>().ConfigureFromInput(i => i!.Uid)
+                                                                           
+                                                                           // Call in the VGrain IRssItemVGrain the method UpdateAsync to store or update the current RssItem Content
                                                                            .Call((g, i, ctx) => g.UpdateAsync(i!, ctx)).Return
 
-                                                                           // Fire a signal indicating this item have been updated
+                                                                           // Fire a signal with RssItem id information for future threatment
                                                                            .FireSignal(PracticeConstants.RssItemUpdatedSignalId).RelayMessage();
                                          })
                                          .Build();
 
             var importSeq = Sequence.Build("import-rss", fixUid: PracticeConstants.ImportRssSequence)
+
+                                     // Define the input expected URI
                                     .RequiredInput<Uri>()
+
+                                    // Use the vgrain IRssRegistryVGrain without specific key (singleton) and call the method RegisterAsync in it to register the URL and produce a normalize Hash Id from the URL
                                     .Use<IRssRegistryVGrain>().Call((g, i, ctx) => g.RegisterAsync(i, ctx)).Return
+
+                                    // Call the sequence load-rss-items to load all the rss feed items
                                     .CallSequence(loadRssFeedSeq.Uid).ReturnNoData
+
                                     .Build();
 
             var refreshAllFeedsSeq = Sequence.Build("refresh-all-inject-feeds", fixUid: new Guid("250EF9E4-6278-4115-97DE-C33D92DC223F"))
+            
+                                              // Define that no input are expected
                                              .NoInput()
+
+                                             // Use the vgrain IRssMonitorVGrain to get all the registred url
+
+                                             /*
+                                              * The implementation of the vgrain IRssMonitorVGrain and IRssRegistryVGrain are the same.
+                                              * But IRssRegistryVGrain is internal, meaning only the current library can see and use it but IRssMonitorVGrain is public.
+                                              * This allow the client to directly calls the IRssMonitorVGrain is needed without the option to add feed.
+                                              */
                                              .Use<IRssMonitorVGrain>().Call((g, ctx) => g.GetAllRegistredFeedAsync(ctx)).Return
+
+                                             // GetAllRegistredFeedAsync return a collection of RssFeedUrlSource containing the URL and its HashId associate
                                              .Foreach(IType<RssFeedUrlSource>.Default, f =>
                                              {
+                                                 // For each feed URL call the sequence load-rss-items to reload the feed information
                                                  return f.CallSequence(loadRssFeedSeq.Uid).ReturnNoData;
                                              })
                                              .Build();
 
+            // Define a trigger that will fire in internal of 2 minutes (Minutes % 2 == 0) and call the sequence refresh-all-inject-feeds
             var autoUpdateTrigger = Trigger.Cron("*/2 * * * *", "auto-update-loop", fixUid: new Guid("7A832833-FFDA-4E08-8E17-764F3E307DAF"))
                                            .AddTargetSequence(refreshAllFeedsSeq.Uid)
                                            .Build();
@@ -531,6 +570,7 @@ namespace Democrite.Framework.Configurations
         }
     }
 }
+
 ```
 
 ## 4 - Execution Handler
@@ -563,6 +603,12 @@ app.MapGet("feed/list", async ([FromServices] IDemocriteExecutionHandler execHan
 ```
 
 # Test
+
+When you finish you'll be able to:
+- Open swagger interface
+- Add some rss (example provide in section [URL](#url))
+- Look at the logs to see the signal info raised by items
+- Wait and see if every X minute the information are correctly reloaded.
 
 ## URL
 

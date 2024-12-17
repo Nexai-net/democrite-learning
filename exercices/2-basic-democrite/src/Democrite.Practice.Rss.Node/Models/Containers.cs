@@ -11,11 +11,5 @@ namespace Democrite.Practice.Rss.Node.Models
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct UrlData(Uri SourceUrl, string Data);
-
-    [Immutable]
-    [Serializable]
-    [GenerateSerializer]
-    [ImmutableObject(true)]
     public record struct UrlRssItem(string Guid, string Link);
 }

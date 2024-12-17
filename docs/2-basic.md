@@ -95,9 +95,11 @@ It's recommended to design your system with separate Client and Node components 
 
 # Definition
 
-A Democrite definition is a serializable data structure that describes a single element within the framework, such as a sequence, trigger, or signal. Each definition contains configuration details and metadata specific to its element type. Definitions are uniquely identified by a GUID (Globally Unique Identifier), but you can also access them using a more human-readable alias called a [Reference Id](/docs/4-expert.m#refrence-id). This alias system provides a convenient way to target specific definitions within your project.
+A Democrite definition is a **serializable** data structure that describes a single element within the framework, such as a sequence, trigger, or signal. Each definition contains configuration details and metadata specific to its element type. Definitions are uniquely identified by a GUID (Globally Unique Identifier), but you can also access them using a more human-readable alias called a [Reference Id](/docs/4-expert.m#refrence-id). This alias system provides a convenient way to target specific definitions within your project.
 
 The primary purpose of definitions is to be stored in a persistent location like a database, YAML file, or similar storage solution. The Democrite cluster can then load and execute these definitions to manage workflows, triggers, and other functionalities within your system.
+
+To facilitate definition creation, we leverage builder objects. These tools assist in providing essential and optional details, while guaranteeing adherence to validity rules at compile time. For instance, in sequence definitions, they enforce type consistency across all transformation steps.
 
 To maintain separation between definition creation and execution, Democrite utilizes the [Democrite.Framework.Builders](https://www.nuget.org/packages/Democrite.Framework.Builders) package. This package provides tools and functionalities dedicated solely to building various types of definitions, ensuring a clean separation between definition logic and runtime execution.
 
@@ -198,6 +200,7 @@ public interface IExampleVGrain : IVGrain
 ```
 
 > [!NOTE]
+>
 > In comparaison to classic orlean **Grain** where you need to inherite "IGrainWith..." interface here you just need to inherite from *IVGrain*
 
 The provided example demonstrates an automatic VGrain configuration pattern. In simpler terms, the grain ID is constructed using a primary key (a GUID) extracted from the method call's input parameter named "**Key**". If this parameter is missing or invalid, a fallback value ("**FirstParameterFallback**") is used. Additionally, a secondary key is derived from the execution context's "**Configuration**" property. If this property is also missing or invalid, another fallback value ("**SecondParameterFallback**") is employed. 
@@ -292,7 +295,7 @@ public sealed class ImplementationVGrain : VGrain<SerializableState, Serializabl
 
 > [!NOTE]
 >
-> In Microsoft Orleans, a Surrogate is a simple, serializable structure that serves as a data container. To utilize Surrogates, you must define a  corresponding IConverter class responsible for transforming the original object into a savable Surrogate and vice versa. This approach simplifies state management by eliminating the need for direct serialization of the original object, which might have complex or non-serializable components.
+> In Microsoft Orleans, a Surrogate is a simple, serializable structure that serves as a data container. To utilize surrogates, you must define a  corresponding **IConverter** class responsible for transforming the original object into a savable Surrogate and vice versa. This approach simplifies state management by eliminating the need for direct serialization of the original object, which might have complex or non-serializable components.
 
 # Sequence
 
@@ -322,6 +325,12 @@ var collectorSequence = Sequence.Build("sequence-sni")
                                                            .Call((a, data, ctx) => a.StoreAsync(data, ctx)).Return
                                 .Build();
 ```
+
+In the present example, we observe the process of building a sequence definition.
+- **Meta Information**: We begin by providing fundamental metadata, including the Simple Name Identifier (SNI), a fixed Unique Identifier (UID), and a descriptive explanation.
+- **Input Specification**: Next, we specify the type of input the sequence anticipates. This input may be optional.
+- **Step Definition: Subsequently**, we construct the individual steps of the sequence. In this particular case, three steps are defined, each designed to call a VGrain with a designated target method.
+- **Definition Finalization**: Finally, the Build method is employed to finalize the definition, encapsulating all the specified components.
 
 "collectorSequence" is a definition you can store. <br/>
 For example in the node memory:
@@ -389,7 +398,7 @@ var result = execResult.SafeGetResult();
 
 > [!NOTE]
 >
-> The IExecutionHandler interface is primarily designed for client-side usage. It enables clients to interact with the **Democrite** framework, including executing Sequences and calling VGrains.
+> The **IExecutionHandler** interface is primarily designed for client-side usage. It enables clients to interact with the **Democrite** framework, including executing Sequences and calling VGrains.
 
 # Trigger / Signal
 

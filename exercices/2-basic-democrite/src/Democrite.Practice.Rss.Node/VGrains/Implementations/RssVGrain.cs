@@ -41,6 +41,11 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <summary>
         /// Initializes a new instance of the <see cref="RssVGrain"/> class.
         /// </summary>
+        /// <param name="hashService">This is the common service to produce Hash base on content (by default SHA256 + Unicity values).</param>
+        /// <param name="timeManager">This is the service to privide time information.</param>
+        /// <param name="logger">This is the logger service to let log about working</param>
+        /// <param name="httpClientFactory">This is the factory service used to produce a safe reusable <see cref="IHttpClient"/> to download the rss xml feed with a web URL</param>
+        /// <param name="persistentState">This service ensure the storage of this VGrain state. <see cref="PersistentStateAttribute"> provide some information to correctly resolve the correct IPersistentState</param>
         public RssVGrain([PersistentState("Rss")] IPersistentState<RssStateSurrogate> persistentState,
                          ILogger<IRssVGrain> logger,
                          IHttpClientFactory httpClientFactory,
