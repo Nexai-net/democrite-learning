@@ -1,34 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="AppSettings.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="AppSettings.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="AppSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Democrite.Framework.Bag.DebugTools" />
-    <PackageReference Include="Democrite.Framework.Builders" />
-    <PackageReference Include="Democrite.Framework.Extensions.Mongo" />
-    <PackageReference Include="Democrite.Framework.Node" />
-    <PackageReference Include="Democrite.Framework.Node.Cron" />
-    <PackageReference Include="Democrite.Framework.Node.StreamQueue" />
-    <PackageReference Include="Microsoft.Extensions.Http" />
-  </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Democrite.Practice.Rss.Node.UTests"/>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Democrite.Practice.Rss.DataContract\Democrite.Practice.Rss.DataContract.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Democrite.Framework.Bag.DebugTools" />
+		<PackageReference Include="Democrite.Framework.Builders" />
+		<PackageReference Include="Democrite.Framework.Extensions.Mongo" />
+		<PackageReference Include="Democrite.Framework.Node" />
+		<PackageReference Include="Democrite.Framework.Node.Cron" />
+		<PackageReference Include="Democrite.Framework.Node.StreamQueue" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Democrite.Practice.Rss.DataContract\Democrite.Practice.Rss.DataContract.csproj" />
+	</ItemGroup>
 
 </Project>

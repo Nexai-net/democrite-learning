@@ -15,7 +15,12 @@
     <PackageVersion Include="Democrite.Framework.Node" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Node.Cron" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Node.StreamQueue" Version="0.5.0.777-prerelease" />
+    <PackageVersion Include="Democrite.UnitTests.ToolKit" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
   </ItemGroup>
 </Project>

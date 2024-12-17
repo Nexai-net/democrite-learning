@@ -15,6 +15,11 @@ ___
 // Remove the regitry but implementent a new grain RssMonitorVGrain
 
 # Unit Test
+
+// Internal visible too
+// add Democrite toolkit
+
+
 # Python artifact
 
 https://stackoverflow.com/questions/328356/extracting-text-from-html-file-using-python
