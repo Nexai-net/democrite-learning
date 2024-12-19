@@ -25,5 +25,10 @@ namespace Democrite.Practice.Rss.Node.VGrains
         /// Updates the rss item content
         /// </summary>
         Task<UrlRssItem> UpdateAsync(RssItem item, IExecutionContext<string> executionContext);
+
+        /// <summary>
+        /// Store content article
+        /// </summary>
+        Task StoreArticleContentAsync(string content,  IExecutionContext<string> executionContext);
     }
 }

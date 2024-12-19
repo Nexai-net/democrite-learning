@@ -1,6 +1,7 @@
 ﻿using Democrite.Framework;
 using Democrite.Framework.Configurations;
 using Democrite.Framework.Core.Abstractions.Enums;
+using Democrite.Framework.Extensions.Docker.Abstractions.Options;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,8 @@ var node = DemocriteNode.Create((h, cfg) => cfg.AddJsonFile("AppSettings.json"),
 
                                      // Activate Cron trigger management
                                      .UseCronTriggers()
+
+                                     .EnableDockerHost()
 
                                      // Allow client connection to this node
                                      .ExposeNodeToClient()

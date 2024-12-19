@@ -22,7 +22,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
     internal sealed class RssItemVGrain : VGrainBase<RssItemState, RssItemStateSurrogate, RssItemStateConverter, IRssItemVGrain>, IRssItemVGrain
     {
         #region Fields
-        
+
         private readonly ITimeManager _timeManager;
         private readonly ISignalService _signalService;
 
@@ -40,7 +40,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         public RssItemVGrain([PersistentState("Rss")] IPersistentState<RssItemStateSurrogate> persistentState,
                              ILogger<IRssItemVGrain> logger,
                              ITimeManager timeManager,
-                             ISignalService signalService) 
+                             ISignalService signalService)
             : base(logger, persistentState)
         {
             this._timeManager = timeManager;
@@ -68,10 +68,20 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
             var itemResult = new UrlRssItem(item.Uid, item.Link);
 
             // The content have changed then signal is fired to trigger different processing
-            if (hasChanged)
+            // Raised also when the content is empty
+            if (hasChanged || string.IsNullOrEmpty(this.State.Current?.Content))
                 await this._signalService.Fire(PracticeConstants.RssItemUpdatedSignalId, itemResult, executionContext.CancellationToken, this);
 
             return itemResult;
+        }
+
+        /// <inheritdoc />
+        public async Task StoreArticleContentAsync(string content, IExecutionContext<string> executionContext)
+        {
+            var added = this.State!.SetCurrentContent(content);
+
+            if (added)
+                await PushStateAsync(executionContext.CancellationToken);
         }
 
         #endregion

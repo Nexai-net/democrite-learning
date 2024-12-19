@@ -7,6 +7,8 @@ namespace Democrite.Framework.Configurations
 {
     using Democrite.Framework.Bag.DebugTools;
     using Democrite.Framework.Builders;
+    using Democrite.Framework.Builders.Artifacts;
+    using Democrite.Framework.Core.Abstractions.Artifacts;
     using Democrite.Practice.Rss.DataContract;
     using Democrite.Practice.Rss.DataContract.Models;
     using Democrite.Practice.Rss.Node.Models;
@@ -14,6 +16,7 @@ namespace Democrite.Framework.Configurations
 
     using System;
     using System.Diagnostics;
+    using YamlDotNet.Core;
 
     public static class DefinitionConfigurationExtensions
     {
@@ -92,7 +95,7 @@ namespace Democrite.Framework.Configurations
                                              .Build();
 
             // Define a trigger that will fire in internal of 2 minutes (Minutes % 2 == 0) and call the sequence refresh-all-inject-feeds
-            var autoUpdateTrigger = Trigger.Cron("*/2 * * * *", "auto-update-loop", fixUid: new Guid("7A832833-FFDA-4E08-8E17-764F3E307DAF"))
+            var autoUpdateTrigger = Trigger.Cron("* * * * *", "auto-update-loop", fixUid: new Guid("7A832833-FFDA-4E08-8E17-764F3E307DAF"))
                                            .AddTargetSequence(refreshAllFeedsSeq.Uid)
                                            .Build();
 
@@ -106,6 +109,34 @@ namespace Democrite.Framework.Configurations
                                                       .AddTargetStreams(rssItemIndexationStream)
                                                       .Build();
 
+            //
+            // Create external VGrain using a python script to be executed
+            //
+            // Need python 3.9+ installed
+            // Need python library democrite 'pip install democrite'
+            // Need python library lxml 'pip install lxml'
+            //
+            var extractorArtifact = Artifact.VGrain("html-extrator", uid: new Guid("E7C685D4-DB74-4E7A-A95A-F54E48ECC8BB"))
+                                            //.ExecuteBy("'C:/Users/Mickaelthumerel/AppData/Local/Programs/Python/Python312/python.exe'", null, ':')
+                                            .Python()
+                                            .Directory("Resources")
+                                            .ExecuteFile("HtmlExtractor.py")
+
+                                            .ExecEnvironment(e =>
+                                            {
+                                                e.Docker()
+                                                 .Image("python")
+                                                 .InstallDemocritePython()
+                                                 .AddExtraBuildInstruction("RUN pip install lxml");
+                                            })
+#if DEBUG
+                                            .Verbose(ArtifactExecVerboseEnum.Full)
+#else
+                                            .Verbose(ArtifactExecVerboseEnum.Minimal)
+#endif
+                                            .Persistent()
+                                            .CompileAsync().GetAwaiter().GetResult();
+
             var rssItemIndexationSequence = Sequence.Build("rss-item-indexation", fixUid: new Guid("469E8121-CCFA-49DB-9582-1AF66C5C78AB"))
 
                                                     // Define that incomming input MUST be of type UrlRssItem
@@ -113,6 +144,17 @@ namespace Democrite.Framework.Configurations
                                                     
                                                     // VGrain from bag "debug", this vgrain will simply display on the log the input and/or the execution context informations 
                                                     .Use<IDisplayInfoVGrain>().Call((g, i, ctx) => g.DisplayCallInfoAsync(i, ctx)).Return
+
+                                                    // Store in execution context the full UrlRssItem that contains the rss item id information
+                                                    .PushToContext(d => d)
+
+                                                    // Use external artifact to extract HTML article content
+                                                    .Use<IGenericArtifactExecutableVGrain>().Configure(extractorArtifact.Uid)
+                                                                                            .Call((g, i, ctx) => g.RunAsync<HtmlPageContent, string>(i.Link, ctx)).Return
+
+                                                    // Store in IRssItemVGrain the article content
+                                                    .Use<IRssItemVGrain>().ConfigureFromContext<UrlRssItem, string>(r => r.Guid)
+                                                                          .Call((g, i, ctx) => g.StoreArticleContentAsync(i.Content!, ctx)).Return
                                                     
                                                     .Build();
 
@@ -128,6 +170,8 @@ namespace Democrite.Framework.Configurations
                                                 .AddTargetSequence(rssItemIndexationSequence)
                                                 .Build();
 
+
+
 #if DEBUG
             // Automatically display in the console when a signal flagged is fire
             builder.ShowSignals(rssItemUpdated);
@@ -139,6 +183,7 @@ namespace Democrite.Framework.Configurations
                 p.SetupTriggers(autoUpdateTrigger);
                 p.SetupSequences(importSeq, loadRssFeedSeq, refreshAllFeedsSeq);
 
+                p.SetupArtifacts(extractorArtifact);
                 p.SetupStreamQueues(rssItemIndexationStream);
                 p.SetupSequences(rssItemIndexationSequence);
                 p.SetupTriggers(triggerToInjectInStreamQueue, triggerFromStreamQueue);

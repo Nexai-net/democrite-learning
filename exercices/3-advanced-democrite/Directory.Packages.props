@@ -11,6 +11,8 @@
     <PackageVersion Include="Democrite.Framework.Builders" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Client" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Core.Abstractions" Version="0.5.0.777-prerelease" />
+    <PackageVersion Include="Democrite.Framework.Extensions.Docker" Version="0.5.0.777-prerelease" />
+    <PackageVersion Include="Democrite.Framework.Extensions.Docker.Builders" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Extensions.Mongo" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Node" Version="0.5.0.777-prerelease" />
     <PackageVersion Include="Democrite.Framework.Node.Cron" Version="0.5.0.777-prerelease" />

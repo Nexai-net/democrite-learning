@@ -81,6 +81,19 @@ namespace Democrite.Practice.Rss.Node.States
             return true;
         }
 
+        /// <inheritdoc />
+        internal bool SetCurrentContent(string content)
+        {
+            if (this.Current is null)
+                return false;
+
+            if (string.Equals(this.Current.Content, content))
+                return false;
+
+            this.Current = this.Current.WithContent(content);
+            return true;
+        }
+
         #endregion
     }
 

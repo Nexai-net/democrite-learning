@@ -12,4 +12,10 @@ namespace Democrite.Practice.Rss.Node.Models
     [GenerateSerializer]
     [ImmutableObject(true)]
     public record struct UrlRssItem(string Guid, string Link);
+
+    [Immutable]
+    [Serializable]
+    [GenerateSerializer]
+    [ImmutableObject(true)]
+    internal record struct HtmlPageContent(string Content, string Source);
 }

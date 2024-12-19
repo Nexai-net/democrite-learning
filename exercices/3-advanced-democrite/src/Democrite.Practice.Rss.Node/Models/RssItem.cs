@@ -18,10 +18,24 @@ namespace Democrite.Practice.Rss.Node.Models
                                        string? Content,
                                        string SourceId,
                                        IReadOnlyCollection<string> Creators,
-                                       DateTime PublishDate,
+                                       DateTime? PublishDate,
                                        IReadOnlyCollection<string> Keywords,
                                        IReadOnlyCollection<string> Categories) : IEquatable<RssItem>
     {
+        public RssItem WithContent(string content)
+        {
+            return new RssItem(this.Uid,
+                               this.Link,
+                               this.Title,
+                               this.Description,
+                               content,
+                               this.SourceId,
+                               this.Creators,
+                               this.PublishDate,
+                               this.Keywords,
+                               this.Categories);
+        }
+
         /// <inheritdoc />
         public bool Equals(RssItem? item)
         {
@@ -37,7 +51,7 @@ namespace Democrite.Practice.Rss.Node.Models
                    string.Equals(this.Description, item.Description) &&
                    string.Equals(this.Content, item.Content) &&
                    string.Equals(this.SourceId, item.SourceId) &&
-                   this.PublishDate.Equals(item.PublishDate) &&
+                   (this.PublishDate?.Equals(item.PublishDate) ?? item.PublishDate is null) &&
                    this.Creators.SequenceEqual(item.Creators) &&
                    this.Keywords.SequenceEqual(item.Keywords) &&
                    this.Categories.SequenceEqual(item.Categories);

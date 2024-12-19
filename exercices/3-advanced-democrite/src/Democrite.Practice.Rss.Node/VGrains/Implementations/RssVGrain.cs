@@ -146,7 +146,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
                 if (encodedContent is not null && string.IsNullOrEmpty(encodedContent.Value) == false)
                     content = HttpUtility.HtmlDecode(encodedContent.Value);
 
-                var pudDate = this._timeManager.UtcNow;
+                DateTime? pudDate = null;
                 var pubdateElem = item.Elements("pubdate").FirstOrDefault();
                 if (pubdateElem is not null && string.IsNullOrEmpty(pubdateElem.Value) == false && DateTime.TryParse(pubdateElem.Value, out var parsedPubDate))
                     pudDate = parsedPubDate;

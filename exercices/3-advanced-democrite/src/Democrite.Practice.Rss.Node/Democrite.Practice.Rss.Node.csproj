@@ -9,21 +9,27 @@
 
 	<ItemGroup>
 		<None Remove="AppSettings.json" />
+		<None Remove="Resources\HtmlExtractor.py" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="AppSettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Resources\HtmlExtractor.py">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Democrite.Practice.Rss.Node.UTests"/>
+		<InternalsVisibleTo Include="Democrite.Practice.Rss.Node.UTests" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Democrite.Framework.Bag.DebugTools" />
 		<PackageReference Include="Democrite.Framework.Builders" />
+		<PackageReference Include="Democrite.Framework.Extensions.Docker" />
+		<PackageReference Include="Democrite.Framework.Extensions.Docker.Builders" />
 		<PackageReference Include="Democrite.Framework.Extensions.Mongo" />
 		<PackageReference Include="Democrite.Framework.Node" />
 		<PackageReference Include="Democrite.Framework.Node.Cron" />
