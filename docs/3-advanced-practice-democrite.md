@@ -19,6 +19,12 @@ ___
 // Internal visible too
 // add Democrite toolkit
 
+// 1 Simple test to validate Uid is well check by the update method
+// 2 Test to ensure save and raise are only made when new element occurred
+- This test show that current code doesn't respect the requirement due to IReadOnlyCollection that check the collection type instead of the content only.
+- Fix by managing by hand the equality
+
+MS bug report ?
 
 # Python artifact
 

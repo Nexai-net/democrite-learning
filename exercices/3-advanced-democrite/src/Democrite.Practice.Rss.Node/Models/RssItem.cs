@@ -20,7 +20,44 @@ namespace Democrite.Practice.Rss.Node.Models
                                        IReadOnlyCollection<string> Creators,
                                        DateTime PublishDate,
                                        IReadOnlyCollection<string> Keywords,
-                                       IReadOnlyCollection<string> Categories);
+                                       IReadOnlyCollection<string> Categories) : IEquatable<RssItem>
+    {
+        /// <inheritdoc />
+        public bool Equals(RssItem? item)
+        {
+            if (object.ReferenceEquals(this, item)) 
+                return true;
+
+            if (item is null)
+                return false;
+
+            return string.Equals(this.Uid, item.Uid) &&
+                   string.Equals(this.Link, item.Link) &&
+                   string.Equals(this.Title, item.Title) &&
+                   string.Equals(this.Description, item.Description) &&
+                   string.Equals(this.Content, item.Content) &&
+                   string.Equals(this.SourceId, item.SourceId) &&
+                   this.PublishDate.Equals(item.PublishDate) &&
+                   this.Creators.SequenceEqual(item.Creators) &&
+                   this.Keywords.SequenceEqual(item.Keywords) &&
+                   this.Categories.SequenceEqual(item.Categories);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.Uid,
+                                    this.Link,
+                                    this.Title,
+                                    this.Description,
+                                    this.Content,
+                                    this.SourceId,
+                                    this.PublishDate,
+                                    HashCode.Combine((this.Creators ?? EnumerableHelper<string>.ReadOnly).OrderBy(s => s).Aggregate(0, (acc, val) => acc ^ (val?.GetHashCode() ?? 0)),
+                                                     (this.Keywords ?? EnumerableHelper<string>.ReadOnly).OrderBy(s => s).Aggregate(0, (acc, val) => acc ^ (val?.GetHashCode() ?? 0)),
+                                                     (this.Categories ?? EnumerableHelper<string>.ReadOnly).OrderBy(s => s).Aggregate(0, (acc, val) => acc ^ (val?.GetHashCode() ?? 0))));
+        }
+    }
 
     [Immutable]
     [Serializable]
