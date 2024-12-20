@@ -49,7 +49,7 @@ namespace Democrite.Practice.Rss.Node.Models
                    string.Equals(this.Link, item.Link) &&
                    string.Equals(this.Title, item.Title) &&
                    string.Equals(this.Description, item.Description) &&
-                   string.Equals(this.Content, item.Content) &&
+                   //string.Equals(this.Content, item.Content) &&
                    string.Equals(this.SourceId, item.SourceId) &&
                    (this.PublishDate?.Equals(item.PublishDate) ?? item.PublishDate is null) &&
                    this.Creators.SequenceEqual(item.Creators) &&
@@ -64,7 +64,7 @@ namespace Democrite.Practice.Rss.Node.Models
                                     this.Link,
                                     this.Title,
                                     this.Description,
-                                    this.Content,
+                                    //this.Content,
                                     this.SourceId,
                                     this.PublishDate,
                                     HashCode.Combine((this.Creators ?? EnumerableHelper<string>.ReadOnly).OrderBy(s => s).Aggregate(0, (acc, val) => acc ^ (val?.GetHashCode() ?? 0)),
