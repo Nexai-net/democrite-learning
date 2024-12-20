@@ -1,6 +1,7 @@
 ﻿using Democrite.Framework.Configurations;
 using Democrite.Framework.Core.Abstractions;
 using Democrite.Practice.Rss.DataContract;
+using Democrite.Practice.Rss.DataContract.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -61,6 +62,21 @@ app.MapGet("feed/list", async ([FromServices] IDemocriteExecutionHandler execHan
 {
     var listExecResult = await execHandler.VGrain<IRssMonitorVGrain>()
                                           .Call((g, ctx) => g.GetAllRegistredFeedAsync(ctx))
+                                          .RunAsync(token);
+
+    var list = listExecResult.SafeGetResult();
+
+    return list;
+});
+
+app.MapGet("search", async ([FromServices] IDemocriteExecutionHandler execHandler, string search, CancellationToken token) =>
+{
+    if (string.IsNullOrEmpty(search))
+        return EnumerableHelper<RssUrlSource>.ReadOnly;
+
+    var listExecResult = await execHandler.VGrain<IRssMonitorVGrain>()
+                                          .SetInput(search)
+                                          .Call((g, i, ctx) => g.SearchAsync(i, ctx))
                                           .RunAsync(token);
 
     var list = listExecResult.SafeGetResult();

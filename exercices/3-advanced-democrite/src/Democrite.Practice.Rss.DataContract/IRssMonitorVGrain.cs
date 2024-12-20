@@ -24,5 +24,11 @@ namespace Democrite.Practice.Rss.DataContract
         /// </summary>
         [Orleans.Concurrency.ReadOnly]
         Task<IReadOnlyCollection<UrlSource>> GetAllRegistredFeedAsync(IExecutionContext ctx);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Orleans.Concurrency.ReadOnly]
+        Task<IReadOnlyCollection<RssUrlSource>> SearchAsync(string Pattern, IExecutionContext ctx);
     }
 }

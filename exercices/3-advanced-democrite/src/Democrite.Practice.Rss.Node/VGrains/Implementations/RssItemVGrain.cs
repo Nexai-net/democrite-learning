@@ -37,7 +37,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
         /// <param name="logger">This is the logger service to let log about working</param>
         /// <param name="persistentState">This service ensure the storage of this VGrain state. <see cref="PersistentStateAttribute"> provide some information to correctly resolve the correct IPersistentState</param>
         /// <paramref name="signalService"/>This service allow us to fire a signal.
-        public RssItemVGrain([PersistentState("Rss")] IPersistentState<RssItemStateSurrogate> persistentState,
+        public RssItemVGrain([PersistentState("Rss", "LookupStorageConfig")] IPersistentState<RssItemStateSurrogate> persistentState,
                              ILogger<IRssItemVGrain> logger,
                              ITimeManager timeManager,
                              ISignalService signalService)

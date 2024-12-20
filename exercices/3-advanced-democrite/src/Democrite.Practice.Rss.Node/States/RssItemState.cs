@@ -4,6 +4,7 @@
 
 namespace Democrite.Practice.Rss.Node.States
 {
+    using Democrite.Framework.Core.Abstractions.Repositories;
     using Democrite.Practice.Rss.Node.Models;
 
     using Elvex.Toolbox.Abstractions.Services;
@@ -61,7 +62,7 @@ namespace Democrite.Practice.Rss.Node.States
         /// </summary>
         public RssItemStateSurrogate ToSurrogate()
         {
-            return new RssItemStateSurrogate(this.Current, this._history, this.LastUpdateTime);
+            return new RssItemStateSurrogate(this.Current?.Uid ?? "", this.Current, this._history, this.LastUpdateTime);
         }
 
         /// <summary>
@@ -104,7 +105,7 @@ namespace Democrite.Practice.Rss.Node.States
     [Serializable]
     [GenerateSerializer]
     [ImmutableObject(true)]
-    public record struct RssItemStateSurrogate(RssItem? Current, IReadOnlyCollection<RssItem> History, DateTime? LastUpdate);
+    public record struct RssItemStateSurrogate(string Uid, RssItem? Current, IReadOnlyCollection<RssItem> History, DateTime? LastUpdate) : IEntityWithId<string>;
 
     [RegisterConverter]
     internal sealed class RssItemStateConverter : IConverter<RssItemState, RssItemStateSurrogate>
