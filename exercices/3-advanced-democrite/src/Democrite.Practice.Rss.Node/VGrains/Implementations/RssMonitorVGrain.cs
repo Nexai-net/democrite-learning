@@ -81,6 +81,7 @@ namespace Democrite.Practice.Rss.Node.VGrains.Implementations
                                                     (r.Current.Title.Split(w).Length - 1) +
                                                     (r.Current.Description.Split(w).Length - 1) +
                                                     r.Current.Categories.Where(s => string.Equals(s, w, StringComparison.OrdinalIgnoreCase)).Count());
+
                 return (score: score + scoreIteration, data: r);
             })
             .OrderByDescending(s => s.score)
